@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.5">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.12">
+    <script>node {
+
+    withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;docker_creds_id&apos;,usernameVariable: &apos;USERNAME&apos;,passwordVariable: &apos;PASSWORD&apos;]]) {
+        echo &quot;${env.USERNAME} ${env.PASSWORD}&quot;
+    }
+
+     def sonar_jdbc_uri = &apos;jdbc:postgresql://adc-ci-swarm-master.eastus.cloudapp.azure.com:5432/sonar&apos;
+     def sonar_web_url = &apos;http://adc-ci-swarm-master.eastus.cloudapp.azure.com:9000/&apos;
+      
+      echo &apos;[ADC WORKFLOW] :: Starting SONAR analysis.&apos;
+      withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;sonarqube_cred_id&apos;, usernameVariable: &apos;sonar_jdbc_user&apos;, passwordVariable: &apos;sonar_jdbc_password&apos;]]) {
+        echo &quot;${env.sonar.jdbc.user} ${env.sonar_jdbc_password} ${sonar_jdbc_uri} ${sonar_web_url}&quot;
+        echo &apos;[ADC WORKFLOW] :: SONAR Analysis Complete.&apos;
+      }
+
+}
+</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>

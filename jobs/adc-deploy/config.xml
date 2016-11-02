@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.5.3">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>https://github.com/andresfuentes/Checklist.git</url>
+        <credentialsId>90f2ce63-b941-407a-8c9b-6436bffcb532</credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/model-refinement</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <assignedNode>docker</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command># Initiate RFC and notify the owners
+#docker-compose run cicd createAndNotify
+
+# Update application specific config
+#docker-compose run cicd updateconfig
+
+# Set Rollback point
+#docker-compose run cicd setrollback
+
+# Pull Image from Registry/Hub
+#docker-compose run cicd pullImage
+
+# Upgrade Database Schema
+#docker-compose run cicd schemaUpgrade
+
+# Deploy the application
+#docker-compose run cicd deploy
+
+
+# Run application Health Check --&gt; should be able to rollback the DB changes and 
+# down grade the application to previous version
+#docker-compose run cicd health
+
+# Create Git Tag Build -- need to understand what does it mean
+#docker-compose run cicd tagBuild
+
+
+
+# Close RFC
+#docker-compose run cicd closerfc
+
+
+
+
+
+
+
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>
