@@ -13,7 +13,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>echo &quot;Credentials are $username:$password&quot;</command>
+      <command>echo &quot;Credentials are $password&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
