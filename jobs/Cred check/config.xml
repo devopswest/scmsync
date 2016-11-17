@@ -13,17 +13,18 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>echo &quot;Credentials are $Demo_Cred&quot;</command>
+      <command>echo &quot;Credentials are $username:$password&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
   <buildWrappers>
     <org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper plugin="credentials-binding@1.9">
       <bindings>
-        <org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding>
+        <org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding>
           <credentialsId>pwc-jenkins</credentialsId>
-          <variable>Demo_Cred</variable>
-        </org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding>
+          <usernameVariable>username</usernameVariable>
+          <passwordVariable>password</passwordVariable>
+        </org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding>
       </bindings>
     </org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper>
   </buildWrappers>
