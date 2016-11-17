@@ -13,8 +13,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>set +x
-echo &quot;Credentials are $Demo_Cred&quot;</command>
+      <command>echo &quot;Credentials are $Demo_Cred&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
@@ -22,7 +21,7 @@ echo &quot;Credentials are $Demo_Cred&quot;</command>
     <org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper plugin="credentials-binding@1.9">
       <bindings>
         <org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding>
-          <credentialsId>sonarqube_cred_id</credentialsId>
+          <credentialsId>pwc-jenkins</credentialsId>
           <variable>Demo_Cred</variable>
         </org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding>
       </bindings>
