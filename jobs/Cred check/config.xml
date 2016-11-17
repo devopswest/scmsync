@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
+  <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties/>
@@ -21,7 +22,7 @@ echo &quot;Credentials are $Demo_Cred&quot;</command>
     <org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper plugin="credentials-binding@1.9">
       <bindings>
         <org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding>
-          <credentialsId>90f2ce63-b941-407a-8c9b-6436bffcb532</credentialsId>
+          <credentialsId>sonarqube_cred_id</credentialsId>
           <variable>Demo_Cred</variable>
         </org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding>
       </bindings>
