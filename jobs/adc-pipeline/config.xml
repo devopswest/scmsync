@@ -1,6 +1,90 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.5">
+  <description></description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.12">
+    <script>
+
+node {
+   
+    // Build using a custom docker container
+    def buildContainer = docker.image(&apos;mvn-npm:latest&apos;)
+    
+    buildContainer.inside(&apos;-v /m2repo:/m2repo&apos;) {
+        
+      // Set up a shared Maven repo so we don&apos;t need to download all dependencies on every build.
+      //writeFile file: &apos;settings.xml&apos;, text: &apos;&lt;settings&gt;&lt;localRepository&gt;/m2repo&lt;/localRepository&gt;&lt;/settings&gt;&apos;
+      
+     
+      stage &apos;Stage 1:Checking out GitHub Repo&apos;
+      git url: &apos;https://github.com/epasham/Checklist.git&apos;
+    
+      stage &apos;Stage 2:Run npm update and npm build&apos;
+      sh &apos;npm update&apos;
+      sh &apos;npm run build&apos;
+      
+      stage &apos;Stage 3:Run npm test&apos;
+      sh &apos;npm test&apos;
+      
+      stage &apos;Stage 4:Run Scans&apos;
+      sh &apos;gradle checkstyleMain checkThePMD fortifyReport&apos;
+      
+      stage &apos;Stage 5:Run bower update&apos;
+      sh &apos;bower update --allow-root&apos;
+      
+      stage &apos;Stage 6:Run mvn goals&apos;
+      sh &apos;mvn -Dmaven.test.skip=true compile package&apos; 
+      // Build with maven settings.xml file that specs the local Maven repo.
+      //sh &apos;mvn -B -s settings.xml -Dmaven.test.skip=true compile package&apos;
+      
+      sh &apos;echo $(pwd)&apos;
+    
+      stash includes: &apos;./target/*.war,Dockerfile&apos;, name: &apos;dockerBuild&apos;
+      
+      stage &apos;Stage 7:Code Analysis&apos;
+      //def sonar_jdbc_uri = &apos;jdbc:postgresql://adc-ci-swarm-master.eastus.cloudapp.azure.com:5432/sonar&apos;
+      //def sonar_web_url = &apos;http://adc-builder.eastus.cloudapp.azure.com:9000/&apos;
+      def sonar_web_url = &apos;http://adc-ci-swarm-node2.eastus.cloudapp.azure.com:9000/&apos;
+      
+      echo &apos;[ADC WORKFLOW] :: Starting SONAR analysis.&apos;
+      withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;sonarqube_cred_id&apos;, usernameVariable: &apos;sonar_jdbc_user&apos;, passwordVariable: &apos;sonar_jdbc_password&apos;]]) {
+        //sh &apos;mvn sonar:sonar -Dsonar.jdbc.username=$env.sonar_jdbc_user -Dsonar.jdbc.password=$env.sonar_jdbc_password -Dsonar.jdbc.url=&quot;&apos; + sonar_jdbc_uri + &apos;&quot; -Dsonar.host.url=&quot;&apos; + sonar_web_url + &apos;&quot;&apos;
+        sh &apos;mvn sonar:sonar -Dsonar.host.url=&quot;&apos; + sonar_web_url + &apos;&quot;&apos;
+        echo &apos;[ADC WORKFLOW] :: SONAR Analysis Complete.&apos;
+      }
+      
+    }  
+  
+      stage &apos;Stage 8:Build docker image&apos;
+      unstash &apos;dockerBuild&apos;
+      // Build final image using the Dockerfile and the docker.build command
+      // This container only contains the packaged war, not the source or interim build steps
+      def adcImg = docker.build(&quot;ekambaram/checklist:${env.BUILD_TAG}&quot;)
+   
+      registry_url = &apos;https://index.docker.io/v1/&apos; // Docker Hub
+      stage &apos;Stage 9: Publish to DockerHub&apos;
+      
+      //sh &quot;docker login -u $docker_user -p $docker_password $registry_url&quot;
+      //sh &quot;docker push ekambaram/checklist:${env.BUILD_TAG}&quot;
+      
+      withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;docker_creds_id&apos;,usernameVariable: &apos;USERNAME&apos;,passwordVariable: &apos;PASSWORD&apos;]]) {
+        echo &quot;${env.USERNAME} ${env.PASSWORD}&quot;
+        sh &quot;docker login -u $env.USERNAME -p $env.PASSWORD $registry_url&quot;
+        sh &quot;docker push ekambaram/checklist:${env.BUILD_TAG}&quot;
+      }
+      
+      //docker.withRegistry(&apos;${registry_url}&apos;, &apos;${docker_credential_id}&apos;) { 
+        //stage &apos;Stage 6: Publish to DockerHub&apos;
+        //adcImg.push()
+      //}
+}
+</script>
+    <sandbox>true</sandbox>
+  </definition>
   <triggers/>
 </flow-definition>
