@@ -50,7 +50,7 @@ node {
       //step([$class: &apos;JUnitResultArchiver&apos;, testResults: &apos;target/surefire-reports/*.xml&apos;])
 
       stage &apos;Stage 8:Code Coverage&apos;
-      step([$class: &apos;JaCoCoPublisher&apos;, execPattern: &apos;**/target/**.exec&apos;, classPattern: &apos;**/classes&apos;, sourcePattern: &apos;**/src/main/java&apos;])
+      step([$class: &apos;JacocoPublisher&apos;, execPattern: &apos;**/target/**.exec&apos;, classPattern: &apos;**/classes&apos;, sourcePattern: &apos;**/src/main/java&apos;])
 
       stage &apos;Stage 9:White Source&apos;
       step([$class: &apos;WhiteSourcePublisher&apos;, jobCheckPolicies: &apos;global&apos;, jobApiToken: &apos;f350b639-e7cc-447b-a830-3737eee4a6c0&apos;, product: &apos;CICD-builder&apos;, productVersion: &apos;1.0.0&apos;, projectToken: &apos;&quot;&quot;&apos;, libIncludes: &apos;&quot;&quot;&apos;, libExcludes: &apos;&quot;&quot;&apos;, mavenProjectToken: &apos;&quot;&quot;&apos;, requesterEmail: &apos;cicd-dev-team@pwc.com&apos;, moduleTokens: &apos;&quot;&quot;&apos;, modulesToInclude: &apos;&quot;&quot;&apos;, modulesToExclude: &apos;&quot;&quot;&apos;, ignorePomModules: &apos;false&apos;])
