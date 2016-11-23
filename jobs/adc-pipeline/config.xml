@@ -31,16 +31,13 @@ node {
       stage &apos;Stage 3:Run bower update&apos;
       sh &apos;bower update --allow-root&apos;
       
-      stage &apos;Stage 4: Run npm build&apos;
-      sh &apos;npm run build&apos;
-      
-      stage &apos;Stage 5:Run npm test&apos;
+      stage &apos;Stage 4:Run npm test&apos;
       sh &apos;npm test&apos;
       
-      stage &apos;Stage 6:Run Scans&apos;
+      stage &apos;Stage 5:Run Scans&apos;
       sh &apos;gradle checkstyleMain checkThePMD fortifyReport&apos;
       
-      stage &apos;Stage 7:Run mvn goals&apos;
+      stage &apos;Stage 6:Run mvn goals&apos;
       sh &apos;mvn -Dmaven.test.skip=true compile package&apos; 
       // Build with maven settings.xml file that specs the local Maven repo.
       //sh &apos;mvn -B -s settings.xml -Dmaven.test.skip=true compile package&apos;
@@ -49,7 +46,7 @@ node {
     
       stash includes: &apos;./target/*.war,Dockerfile&apos;, name: &apos;dockerBuild&apos;
       
-      stage &apos;Stage 8:Code Analysis&apos;
+      stage &apos;Stage 7:Code Analysis&apos;
       //def sonar_jdbc_uri = &apos;jdbc:postgresql://adc-ci-swarm-master.eastus.cloudapp.azure.com:5432/sonar&apos;
       //def sonar_web_url = &apos;http://adc-builder.eastus.cloudapp.azure.com:9000/&apos;
       def sonar_web_url = &apos;http://adc-ci-swarm-node2.eastus.cloudapp.azure.com:9000/&apos;
@@ -63,14 +60,14 @@ node {
       
     }  
   
-      stage &apos;Stage 9:Build docker image&apos;
+      stage &apos;Stage 8:Build docker image&apos;
       unstash &apos;dockerBuild&apos;
       // Build final image using the Dockerfile and the docker.build command
       // This container only contains the packaged war, not the source or interim build steps
       def adcImg = docker.build(&quot;ekambaram/checklist:${env.BUILD_TAG}&quot;)
    
       registry_url = &apos;https://index.docker.io/v1/&apos; // Docker Hub
-      stage &apos;Stage 10: Publish to DockerHub&apos;
+      stage &apos;Stage 9: Publish to DockerHub&apos;
       
       //sh &quot;docker login -u $docker_user -p $docker_password $registry_url&quot;
       //sh &quot;docker push ekambaram/checklist:${env.BUILD_TAG}&quot;
