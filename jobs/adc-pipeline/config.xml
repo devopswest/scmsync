@@ -34,9 +34,6 @@ node {
       stage &apos;Stage 4:Run npm test&apos;
       sh &apos;npm test&apos;
       
-      stage &apos;Stage 5:Run Scans&apos;
-      sh &apos;gradle checkstyleMain checkThePMD fortifyReport&apos;
-      
       stage &apos;Stage 6:Run mvn goals&apos;
       sh &apos;mvn -Dmaven.test.skip=true compile package&apos; 
       // Build with maven settings.xml file that specs the local Maven repo.
@@ -58,16 +55,34 @@ node {
         echo &apos;[ADC WORKFLOW] :: SONAR Analysis Complete.&apos;
       }
       
+      stage &apos;Stage 8:Archive Artifacts&apos;
+      step([$class: &apos;ArtifactArchiver&apos;, artifacts: &apos;target/*.jar, target/*.war&apos;, fingerprint: true])
+
+      stage &apos;Stage 9:Unit Tests&apos;
+      step([$class: &apos;JUnitResultArchiver&apos;, testResults: &apos;target/surefire-reports/*.xml&apos;])
+
+      stage &apos;Stage 10:Code Coverage&apos;
+      step([$class: &apos;JacocoPublisher&apos;, execPattern: &apos;**/target/**.exec&apos;, classPattern: &apos;**/classes&apos;, sourcePattern: &apos;**/src/main/java&apos;])
+
+      stage &apos;Stage 11:White Source&apos;
+      step([$class: &apos;WhiteSourcePublisher&apos;, jobCheckPolicies: &apos;global&apos;, jobApiToken: &apos;f350b639-e7cc-447b-a830-3737eee4a6c0&apos;, product: &apos;CICD-builder&apos;, productVersion: &apos;1.0.0&apos;, projectToken: &apos;&quot;&quot;&apos;, libIncludes: &apos;&quot;&quot;&apos;, libExcludes: &apos;&quot;&quot;&apos;, mavenProjectToken: &apos;&quot;&quot;&apos;, requesterEmail: &apos;cicd-dev-team@pwc.com&apos;, moduleTokens: &apos;&quot;&quot;&apos;, modulesToInclude: &apos;&quot;&quot;&apos;, modulesToExclude: &apos;&quot;&quot;&apos;, ignorePomModules: &apos;false&apos;])
+
+      stage &apos;Stage 12:HPE Security Fortify Scan&apos;
+      step([$class: &apos;FodBuilder&apos;, filePattern: &apos;&quot;&quot;&apos;, assessmentTypeId: &apos;170&apos;, applicationName: &apos;AUS-IFS-Enterprise API&apos;, releaseName: &apos;V1.0&apos;, technologyStack: &apos;JAVA/J2EE&apos;, languageLevel: &apos;1.8&apos;, runOpenSourceAnalysis: &apos;false&apos;, isExpressScan: &apos;false&apos;, isExpressAudit: &apos;false&apos;, doPollFortify: &apos;false&apos;, doPrettyLogOutput: &apos;false&apos;, includeAllFiles: &apos;false&apos;, includeThirdParty: &apos;false&apos;])
+
+      stage &apos;Stage 13:Black Duck Scan&apos;
+      step([$class: &apos;BDCommonScanStep&apos;, scans: &apos;{}&apos;, hubProjectName: &apos;CICD-builder&apos;, hubVersionPhase: &apos;In Development&apos;, hubVersionDist: &apos;External&apos;, hubProjectVersion: &apos;1.0.0&apos;, scanMemory: &apos;4096&apos;, shouldGenerateHubReport: &apos;false&apos;, bomUpdateMaxiumWaitTime: &apos;5&apos;, dryRun: &apos;false&apos;, verbose: &apos;false&apos;])
+      
     }  
   
-      stage &apos;Stage 8:Build docker image&apos;
+      stage &apos;Stage 14:Build docker image&apos;
       unstash &apos;dockerBuild&apos;
       // Build final image using the Dockerfile and the docker.build command
       // This container only contains the packaged war, not the source or interim build steps
       def adcImg = docker.build(&quot;ekambaram/checklist:${env.BUILD_TAG}&quot;)
    
       registry_url = &apos;https://index.docker.io/v1/&apos; // Docker Hub
-      stage &apos;Stage 9: Publish to DockerHub&apos;
+      stage &apos;Stage 15: Publish to DockerHub&apos;
       
       //sh &quot;docker login -u $docker_user -p $docker_password $registry_url&quot;
       //sh &quot;docker push ekambaram/checklist:${env.BUILD_TAG}&quot;
