@@ -24,9 +24,6 @@ node {
      
       stage &apos;Stage 1:Checking out GitHub Repo&apos;
       git url: &apos;https://github.com/epasham/Checklist.git&apos;
-    
-      stage &apos;Stage 2:Run npm update and npm build&apos;
-      sh &apos;npm run build&apos;
       
       stage &apos;Stage 3:Run npm test&apos;
       sh &apos;npm test&apos;
