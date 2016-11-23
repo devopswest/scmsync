@@ -25,14 +25,14 @@ node {
       stage &apos;Stage 1:Checking out GitHub Repo&apos;
       git url: &apos;https://github.com/epasham/Checklist.git&apos;
       
+      stage &apos;Stage 5:Run bower update&apos;
+      sh &apos;bower update --allow-root&apos;
+      
       stage &apos;Stage 3:Run npm test&apos;
       sh &apos;npm test&apos;
       
       stage &apos;Stage 4:Run Scans&apos;
       sh &apos;gradle checkstyleMain checkThePMD fortifyReport&apos;
-      
-      stage &apos;Stage 5:Run bower update&apos;
-      sh &apos;bower update --allow-root&apos;
       
       stage &apos;Stage 6:Run mvn goals&apos;
       sh &apos;mvn -Dmaven.test.skip=true compile package&apos; 
