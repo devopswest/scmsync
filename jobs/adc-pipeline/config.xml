@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.5">
+  <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -25,7 +26,6 @@ node {
       git url: &apos;https://github.com/epasham/Checklist.git&apos;
     
       stage &apos;Stage 2:Run npm update and npm build&apos;
-      sh &apos;npm update&apos;
       sh &apos;npm run build&apos;
       
       stage &apos;Stage 3:Run npm test&apos;
