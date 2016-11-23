@@ -4,4 +4,8 @@
     <id>default</id>
     <url>http://updates.jenkins-ci.org/update-center.json</url>
   </site>
+  <blackDuck-hub-proprietary plugin="hub-jenkins@1.5.4">
+    <id>blackduck-hub-update</id>
+    <url>https://int-update.blackducksoftware.com/HubUpdateSite/update-center.json</url>
+  </blackDuck-hub-proprietary>
 </sites>
