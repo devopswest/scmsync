@@ -67,7 +67,7 @@ node {
 
       //stage &apos;Stage 12:Black Duck Scan&apos;
       //step([$class: &apos;PostBuildHubScan&apos;, scans: &apos;{}&apos;, hubProjectName: &apos;CICD-builder&apos;, hubVersionPhase: &apos;In Development&apos;, hubVersionDist: &apos;External&apos;, hubProjectVersion: &apos;1.0.0&apos;, scanMemory: &apos;4096&apos;, shouldGenerateHubReport: false, bomUpdateMaxiumWaitTime: &apos;5&apos;, dryRun: false, verbose: false])
-      hub_scan bomUpdateMaxiumWaitTime: &apos;5&apos;, dryRun: false, hubProjectName: &apos;Checklist&apos;, hubProjectVersion: &apos;1.0.0&apos;, hubVersionDist: &apos;EXTERNAL&apos;, hubVersionPhase: &apos;PLANNING&apos;, scanMemory: &apos;4096&apos;, scans: [[scanTarget: &apos;&apos;]], shouldGenerateHubReport: false
+      //hub_scan bomUpdateMaxiumWaitTime: &apos;5&apos;, dryRun: false, hubProjectName: &apos;Checklist&apos;, hubProjectVersion: &apos;1.0.0&apos;, hubVersionDist: &apos;EXTERNAL&apos;, hubVersionPhase: &apos;PLANNING&apos;, scanMemory: &apos;4096&apos;, scans: [[scanTarget: &apos;&apos;]], shouldGenerateHubReport: false
     }  
   
       stage &apos;Stage 13:Build docker image&apos;
