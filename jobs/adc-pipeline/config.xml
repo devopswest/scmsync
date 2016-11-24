@@ -77,12 +77,12 @@ node {
       def adcImg = docker.build(&quot;ekambaram/checklist:${env.BUILD_TAG}&quot;)
    
       registry_url = &apos;https://index.docker.io/v1/&apos; // Docker Hub
-      stage &apos;Stage 14: Publish to DockerHub&apos;
       
+      stage &apos;Stage 14: Publish to DockerHub&apos;
       withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;docker_creds_id&apos;,usernameVariable: &apos;USERNAME&apos;,passwordVariable: &apos;PASSWORD&apos;]]) {
-        echo &quot;${env.USERNAME} ${env.PASSWORD}&quot;
-        sh &quot;docker login -u $env.USERNAME -p $env.PASSWORD $registry_url&quot;
-        sh &quot;docker push ekambaram/checklist:${env.BUILD_TAG}&quot;
+      echo &quot;${env.USERNAME} ${env.PASSWORD}&quot;
+      sh &quot;docker login -u $env.USERNAME -p $env.PASSWORD $registry_url&quot;
+      sh &quot;docker push ekambaram/checklist:${env.BUILD_TAG}&quot;
       }
 }
 </script>
