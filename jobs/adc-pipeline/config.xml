@@ -64,9 +64,9 @@ node {
       stage &apos;Stage 13:HPE Security Fortify Scan&apos;
       step([$class: &apos;FodBuilder&apos;, filePattern: &apos;&quot;&quot;&apos;, assessmentTypeId: &apos;170&apos;, applicationName: &apos;AUS-IFS-Enterprise API&apos;, releaseName: &apos;V1.0&apos;, technologyStack: &apos;JAVA/J2EE&apos;, languageLevel: &apos;1.8&apos;, runOpenSourceAnalysis: false, isExpressScan: false, isExpressAudit: false, doPollFortify: false, doPrettyLogOutput: false, includeAllFiles: false, includeThirdParty: false])
 
-      stage &apos;Stage 14:Black Duck Scan&apos;
+      //stage &apos;Stage 14:Black Duck Scan&apos;
       //step([$class: &apos;PostBuildHubScan&apos;, scans: &apos;{}&apos;, hubProjectName: &apos;CICD-builder&apos;, hubVersionPhase: &apos;In Development&apos;, hubVersionDist: &apos;External&apos;, hubProjectVersion: &apos;1.0.0&apos;, scanMemory: &apos;4096&apos;, shouldGenerateHubReport: false, bomUpdateMaxiumWaitTime: &apos;5&apos;, dryRun: false, verbose: false])
-      hub_scan bomUpdateMaxiumWaitTime: &apos;5&apos;, dryRun: false, hubProjectName: &apos;Checklist&apos;, hubProjectVersion: &apos;1.0.0&apos;, hubVersionDist: &apos;EXTERNAL&apos;, hubVersionPhase: &apos;PLANNING&apos;, scanMemory: &apos;4096&apos;, scans: [[scanTarget: &apos;&apos;]], shouldGenerateHubReport: false
+      //hub_scan bomUpdateMaxiumWaitTime: &apos;5&apos;, dryRun: false, hubProjectName: &apos;Checklist&apos;, hubProjectVersion: &apos;1.0.0&apos;, hubVersionDist: &apos;EXTERNAL&apos;, hubVersionPhase: &apos;PLANNING&apos;, scanMemory: &apos;4096&apos;, scans: [[scanTarget: &apos;&apos;]], shouldGenerateHubReport: false
     }  
   
       stage &apos;Stage 15:Build docker image&apos;
