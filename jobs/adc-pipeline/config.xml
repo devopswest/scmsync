@@ -31,6 +31,9 @@ node {
       stage &apos;Stage 3:Run bower update&apos;
       sh &apos;bower update --allow-root&apos;
       
+      stage &apos;compile&apos;
+      sh &apos;mvn compile&apos;
+      
       stage &apos;Stage 4:Run npm test&apos;
       sh &apos;npm test&apos;
       
