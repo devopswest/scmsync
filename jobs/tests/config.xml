@@ -21,7 +21,7 @@ echo &quot;${env.sonar_jdbc_user} ${env.sonar_jdbc_password}&quot;
 echo &quot;${env.sonar_jdbc_user} ${env.sonar_jdbc_password}&quot;
 }
 String jobName = &quot;${env.JOB_NAME}&quot;
-if( jobName.equalsIgnoreCase(&apos;tests&apos;) )
+if( jobName == &quot;tests&quot; )
 {
 echo &quot;$jobName&quot;  
 }
