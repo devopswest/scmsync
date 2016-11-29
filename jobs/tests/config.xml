@@ -21,7 +21,7 @@ echo &quot;${env.sonar_jdbc_user} ${env.sonar_jdbc_password}&quot;
 echo &quot;${env.sonar_jdbc_user} ${env.sonar_jdbc_password}&quot;
 }
 def jobName = &quot;${env.JOB_NAME}&quot;
-if( jobName.equalsIgnoreCase( &quot;tests&quot; ) )
+if( jobName.equalsIgnoreCase( &apos;tests&apos; ) )
 {
 echo &quot;$jobName&quot;  
 }
