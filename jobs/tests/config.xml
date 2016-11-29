@@ -13,10 +13,12 @@
 node
 {
 echo &quot;${env.JOB_NAME}&quot;
-withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;sonarqube_cred_id&apos;, usernameVariable: &apos;sonar_jdbc_user&apos;, passwordVariable: &apos;sonar_jdbc_password&apos;]])
-withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;docker_creds_id&apos;,usernameVariable: &apos;USERNAME&apos;,passwordVariable: &apos;PASSWORD&apos;]])
+withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;sonarqube_cred_id&apos;, usernameVariable: &apos;sonar_jdbc_user&apos;, passwordVariable: &apos;sonar_jdbc_password&apos;]]) {
+withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;docker_creds_id&apos;,usernameVariable: &apos;USERNAME&apos;,passwordVariable: &apos;PASSWORD&apos;]]) {
 echo &quot;${env.USERNAME} ${env.PASSWORD}&quot;
+}
 echo &quot;${env.sonar_jdbc_user} ${env.sonar_jdbc_password}&quot;
+}
 }</script>
     <sandbox>true</sandbox>
   </definition>
