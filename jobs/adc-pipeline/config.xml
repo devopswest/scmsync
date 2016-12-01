@@ -16,7 +16,8 @@ node {
     // Build using a custom docker container
     //def buildContainer = docker.image(&apos;mvn-npm:latest&apos;)
     //buildContainer.inside(&apos;-v /m2repo:/m2repo&apos;)
-    docker.image(&apos;mvn-npm:latest&apos;){
+    docker.image(&apos;mvn-npm:latest&apos;).inside
+    {
         
       // Set up a shared Maven repo so we don&apos;t need to download all dependencies on every build.
       //writeFile file: &apos;settings.xml&apos;, text: &apos;&lt;settings&gt;&lt;localRepository&gt;/m2repo&lt;/localRepository&gt;&lt;/settings&gt;&apos;
