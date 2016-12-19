@@ -9,23 +9,20 @@
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.12">
-    <script>
-node
+    <script>node 
 {
-echo &quot;${env.JOB_NAME}&quot;
-withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;sonarqube_cred_id&apos;, usernameVariable: &apos;sonar_jdbc_user&apos;, passwordVariable: &apos;sonar_jdbc_password&apos;]]) {
-withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;docker_creds_id&apos;,usernameVariable: &apos;USERNAME&apos;,passwordVariable: &apos;PASSWORD&apos;]]) {
-echo &quot;${env.USERNAME} ${env.PASSWORD}&quot;
-echo &quot;${env.sonar_jdbc_user} ${env.sonar_jdbc_password}&quot;
-}
-echo &quot;${env.sonar_jdbc_user} ${env.sonar_jdbc_password}&quot;
-}
-String jobName = &quot;${env.JOB_NAME}&quot;
-if( jobName == &quot;tests&quot; )
-{
-echo &quot;$jobName&quot;
-echo &quot;String matched&quot;
-}
+   
+   withCredentials([[
+        $class: &apos;UsernamePasswordMultiBinding&apos;,
+        credentialsId: &apos;sonarqube_cred_id&apos;,
+        usernameVariable: &apos;username&apos;,
+        passwordVariable: &apos;password&apos;]]) {
+        BD_USER = &quot;${env.username}&quot;
+        BD_PASSWORD = &quot;${env.password}&quot;
+        }
+        
+        echo &quot;userid: $BD_USER&quot;
+        echo &quot;pwd: $BD_PASSWORD&quot;
 }</script>
     <sandbox>true</sandbox>
   </definition>
