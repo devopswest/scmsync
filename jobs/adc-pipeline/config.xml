@@ -48,7 +48,7 @@
         docker.image(&apos;easydevops/cicd:java&apos;).inside
     {
                 stage &apos;Stage 1:Checking out GitHub Repo&apos;
-                checkout([$class: &apos;GitSCM&apos;, branches: [[name: &apos;*/${REPO_BRANCH}&apos;]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: &apos;${REPO_CRED_ID}&apos;, url: &apos;${REPO_URL}&apos;]]])
+                checkout([$class: &apos;GitSCM&apos;, branches: [[name: &apos;*/cicd-pipeline&apos;]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: &apos;cbeaa05f-0c27-49d5-8ccf-7844af8a49f2&apos;, url: &apos;https://Saikrishna_Gogula@bitbucket.org/pwcadc/adcclientms.git&apos;]]])
                 //git url: &quot;$REPO_URL&quot;
 
                 stage &apos;Stage 2:Run build&apos;
