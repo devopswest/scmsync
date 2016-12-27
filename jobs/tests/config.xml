@@ -25,7 +25,7 @@
           <defaultValue>https://Saikrishna_Gogula@bitbucket.org/pwcadc/adcclientms.git</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>REGISTRYURL</name>
+          <name>REGISTRY_URL</name>
           <description></description>
           <defaultValue>https://index.docker.io/v1/</defaultValue>
         </hudson.model.StringParameterDefinition>
@@ -47,7 +47,7 @@
         
         echo &quot;userid: $BD_USER&quot;
         echo &quot;pwd: $BD_PASSWORD&quot;
-        echo &quot;registry url: $REGISTRYURL&quot;
+        echo &quot;registry url: $REGISTRY_URL&quot;
 
 }</script>
     <sandbox>true</sandbox>
