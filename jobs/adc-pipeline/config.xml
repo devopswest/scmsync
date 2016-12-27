@@ -38,7 +38,7 @@
         def DOCKER_USER, DOCKER_PASSWORD
         withCredentials([[
         $class: &apos;UsernamePasswordMultiBinding&apos;,
-        credentialsId: &apos;f23655d6-bf5d-423b-b691-138cd34e76b5&apos;,
+        credentialsId: &apos;d26e215d-5e39-42e6-ba6f-9f832984a4ed&apos;,
         usernameVariable: &apos;username&apos;,
         passwordVariable: &apos;password&apos;]]) {
         DOCKER_USER = &quot;${env.username}&quot;
