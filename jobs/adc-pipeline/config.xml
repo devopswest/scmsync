@@ -102,7 +102,7 @@
       
       stage &apos;Stage 16: Publish to DockerHub&apos;
       withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;d26e215d-5e39-42e6-ba6f-9f832984a4ed&apos;,usernameVariable: &apos;USERNAME&apos;,passwordVariable: &apos;PASSWORD&apos;]]) {
-      sh &quot;docker login -u $env.USERNAME -p $env.PASSWORD $REGISTRY_URL&quot;
+      sh &quot;docker login -u $env.USERNAME -p $env.PASSWORD https://index.docker.io/v1/&quot;
       sh &quot;docker push saikrishnagogula/adcclientms:${env.BUILD_TAG}&quot;
       }
 }
