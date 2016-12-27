@@ -7,6 +7,30 @@
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers/>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>REPO_BRANCH</name>
+          <description></description>
+          <defaultValue>cicd-pipeline</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>REPO_CRED_ID</name>
+          <description></description>
+          <defaultValue>abe68692-72fe-4064-8108-62713b4c42b1</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>REPO_URL</name>
+          <description></description>
+          <defaultValue>https://Saikrishna_Gogula@bitbucket.org/pwcadc/adcclientms.git</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>REGISTRY_URL</name>
+          <description></description>
+          <defaultValue>https://index.docker.io/v1/</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.12">
     <script>node 
@@ -23,6 +47,7 @@
         
         echo &quot;userid: $BD_USER&quot;
         echo &quot;pwd: $BD_PASSWORD&quot;
+        echo &quot;registry url: $REGISTRY_URL&quot;
 }</script>
     <sandbox>true</sandbox>
   </definition>
