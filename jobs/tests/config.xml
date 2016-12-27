@@ -47,7 +47,7 @@
         
         echo &quot;userid: $BD_USER&quot;
         echo &quot;pwd: $BD_PASSWORD&quot;
-        echo &quot;registry url: $REGISTRY_URL&quot;
+        echo &quot;registry url: ${env.REGISTRY_URL}&quot;
 
 }</script>
     <sandbox>true</sandbox>
