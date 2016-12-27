@@ -32,7 +32,7 @@
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.12">
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
     <script>node {
 
         def DOCKER_USER, DOCKER_PASSWORD
@@ -75,9 +75,9 @@
                 stage &apos;Stage 8: Unit Tests&apos;
                 step([$class: &apos;JUnitResultArchiver&apos;, testResults: &apos;build/test-results/*.xml&apos;])
                 
-                stage &apos;Stage 9: Whitesource&apos;
+                //stage &apos;Stage 9: Whitesource&apos;
                 //sh &apos;sudo npm install -g whitesource&apos;
-                sh &apos;whitesource run&apos;
+                //sh &apos;whitesource run&apos;
                 
                 stage &apos;Stage 10: Sonarqube analysis&apos;
                 sh &apos;gradle -b pipeline.gradle sonarqube&apos;
