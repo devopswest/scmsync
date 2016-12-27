@@ -1,6 +1,50 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.5">
+  <description></description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>REPO_CRED_ID</name>
+          <description></description>
+          <defaultValue>cbeaa05f-0c27-49d5-8ccf-7844af8a49f2</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>REPO_BRANCH</name>
+          <description></description>
+          <defaultValue>cicd-pipeline</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>REPO_URL</name>
+          <description></description>
+          <defaultValue>https://Saikrishna_Gogula@bitbucket.org/pwcadc/adcclientms.git</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.12">
+    <scm class="hudson.plugins.git.GitSCM" plugin="git@2.5.3">
+      <configVersion>2</configVersion>
+      <userRemoteConfigs>
+        <hudson.plugins.git.UserRemoteConfig>
+          <url>https://Saikrishna_Gogula@bitbucket.org/pwcadc/adcbuilder.git</url>
+          <credentialsId>cbeaa05f-0c27-49d5-8ccf-7844af8a49f2</credentialsId>
+        </hudson.plugins.git.UserRemoteConfig>
+      </userRemoteConfigs>
+      <branches>
+        <hudson.plugins.git.BranchSpec>
+          <name>*/builder</name>
+        </hudson.plugins.git.BranchSpec>
+      </branches>
+      <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+      <submoduleCfg class="list"/>
+      <extensions/>
+    </scm>
+    <scriptPath>builds/Jenkinsfile-app.groovy</scriptPath>
+  </definition>
   <triggers/>
 </flow-definition>
