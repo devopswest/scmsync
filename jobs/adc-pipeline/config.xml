@@ -76,7 +76,7 @@
                 step([$class: &apos;JUnitResultArchiver&apos;, testResults: &apos;build/test-results/*.xml&apos;])
                 
                 stage &apos;Stage 9: Whitesource&apos;
-                sh &apos;sudo npm install -g whitesource&apos;
+                //sh &apos;sudo npm install -g whitesource&apos;
                 sh &apos;whitesource run&apos;
                 
                 stage &apos;Stage 10: Sonarqube analysis&apos;
