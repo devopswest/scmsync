@@ -48,6 +48,9 @@
         echo &quot;userid: $BD_USER&quot;
         echo &quot;pwd: $BD_PASSWORD&quot;
         echo &quot;registry url: ${params.REGISTRY_URL}&quot;
+        echo &quot;repo url: ${params.REPO_URL}&quot;
+        echo &quot;Repo cred id: ${params.REPO_CRED_ID}&quot;
+        echo &quot;Repo branch: ${params.REPO_BRANCH}&quot;
 
 }</script>
     <sandbox>true</sandbox>
