@@ -36,9 +36,9 @@ node {
         //}
 
         //https://wiki.jenkins-ci.org/display/JENKINS/Building+a+software+project#Buildingasoftwareproject-below
-        stage(&quot;Configure&quot;) {
-            configureBuild(env)
-        }
+        //stage(&quot;Configure&quot;) {
+        //    configureBuild(env)
+        //}
 
         //Force a pull
         //sh &quot;docker pull easydevops/cicd:java&quot;
