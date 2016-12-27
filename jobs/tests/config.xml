@@ -32,7 +32,7 @@
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.12">
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
     <script>node 
 {
    
@@ -48,6 +48,9 @@
         echo &quot;userid: $BD_USER&quot;
         echo &quot;pwd: $BD_PASSWORD&quot;
         echo &quot;registry url: $REGISTRY_URL&quot;
+        echo &quot;repo url url: $REPO_URL&quot;
+        echo &quot;repo cred id: $REPO_CRED_ID&quot;
+        echo &quot;repo branch: $REPO_BRANCH&quot;
 }</script>
     <sandbox>true</sandbox>
   </definition>
