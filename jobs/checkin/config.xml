@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.5">
+  <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -26,25 +27,1071 @@
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.12">
-    <scm class="hudson.plugins.git.GitSCM" plugin="git@2.5.3">
-      <configVersion>2</configVersion>
-      <userRemoteConfigs>
-        <hudson.plugins.git.UserRemoteConfig>
-          <url>https://Saikrishna_Gogula@bitbucket.org/pwcadc/adcbuilder.git</url>
-          <credentialsId>cbeaa05f-0c27-49d5-8ccf-7844af8a49f2</credentialsId>
-        </hudson.plugins.git.UserRemoteConfig>
-      </userRemoteConfigs>
-      <branches>
-        <hudson.plugins.git.BranchSpec>
-          <name>*/builder</name>
-        </hudson.plugins.git.BranchSpec>
-      </branches>
-      <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-      <submoduleCfg class="list"/>
-      <extensions/>
-    </scm>
-    <scriptPath>builds/Jenkinsfile-app.groovy</scriptPath>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.12">
+    <script>import groovy.json.JsonSlurper
+
+node {
+        stage(&quot;Pull Vaut&quot;){
+            doPullCredentials(env)
+        }
+
+        //https://wiki.jenkins-ci.org/display/JENKINS/Building+a+software+project#Buildingasoftwareproject-below
+        stage(&quot;Configure&quot;) {
+            configureBuild(env)
+        }
+
+        //Force a pull
+        //sh &quot;docker pull easydevops/cicd:java&quot;
+        stage &quot;Pull Image&quot;
+        echo &quot;&quot;&quot;
+        ***************************************
+        ***         PULL CICD IMAGE         ***
+        ***************************************
+        &quot;&quot;&quot;
+        def img = docker.image(&apos;easydevops/cicd:java&apos;)
+        img.inside(env.DOCKER_PARAMS)
+        {
+            stage(&quot;Pull ${env.REPO_BRANCH}&quot;) {
+                doPull(env)
+            }
+
+            stage(&apos;Version&apos;) {
+                doIncreaseVersion(env)
+            }
+
+            stage(&apos;Build&apos;) {
+                doBuild(env)
+            }
+
+            stage(&apos;Test&apos;) {
+                //TODO: Review. Test is failing
+                //doTest(env)
+            }
+
+            stage(&apos;Scan&apos;) {
+                doScan(env)
+            }
+
+            stage(&apos;Archive&apos;) {
+                doArchive(env)
+            }
+
+            stage(&apos;Package&apos;) {
+                doPackage(env)
+            }
+
+            stage(&quot;Deploy&quot;) {
+                doDeploy(env)
+            }
+
+            stage(&quot;Push&quot;) {
+                doTraking(env)
+            }
+
+            stage(&quot;Clean-up&quot;) {
+                doCleanUp(env)
+            }
+        }
+}
+
+def doPullCredentials(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***      PULL INFO FROM VAULT       ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    def DOCKER_USER, DOCKER_PASSWORD
+    withCredentials([[
+    $class: &apos;UsernamePasswordMultiBinding&apos;,
+        credentialsId: &apos;docker_creds_id&apos;,
+        usernameVariable: &apos;DOCKER_USER&apos;,
+        passwordVariable: &apos;DOCKER_PASSWORD&apos;
+    ]]) {
+        DOCKER_USER = &quot;${env.DOCKER_USER}&quot;
+        DOCKER_PASSWORD = &quot;${env.DOCKER_PASSWORD}&quot;
+    }
+    
+    env.DOCKER_USER = DOCKER_USER
+    env.DOCKER_PASSWORD = DOCKER_PASSWORD
+
+    echo &quot;DOCKER_USER: $DOCKER_USER&quot;
+    echo &quot;DOCKER_PASSWORD: $DOCKER_PASSWORD&quot;
+    echo &quot;DOCKER_USER: ${env.DOCKER_USER}&quot;
+    echo &quot;DOCKER_PASSWORD: ${env.DOCKER_PASSWORD}&quot;
+}
+
+def doPull(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***           PULL CODE             ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    checkout([$class: &apos;GitSCM&apos;,
+        branches: [[name: &quot;*/${env.REPO_BRANCH}&quot;]],
+        doGenerateSubmoduleConfigurations: false,
+        extensions: [],
+        submoduleCfg: [],
+        userRemoteConfigs:[[
+            credentialsId: &quot;${env.REPO_CRED_ID}&quot;,
+            url: &quot;${env.REPO_URL}&quot;
+        ]]
+    ])
+
+    //Show some info
+    //sh &quot;cicd info&quot;
+
+    sh &quot;git config --global user.email \&quot;bot@andresfuentes.com\&quot;&quot;
+    sh &quot;git config --global user.name \&quot;PwCBot\&quot;&quot;
+
+    sh &quot;git clean -df||echo \&quot;\&quot;&quot;
+    sh &quot;git reset --hard||echo \&quot;\&quot;&quot;
+
+    sh &quot;git checkout ${env.REPO_BRANCH}&quot;
+    sh &quot;git show-branch&quot;
+    sh &quot;git clean -df||echo \&quot;\&quot;&quot;
+    sh &quot;git reset --hard||echo \&quot;\&quot;&quot;
+}
+
+
+def doPush(env){
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***           PUSH CHANGES          ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    def app = getApplicationDetails()
+
+    def GIT_USER
+    def GIT_PASSWORD
+
+    withCredentials([[
+      $class: &apos;UsernamePasswordMultiBinding&apos;,
+      credentialsId: &quot;${env.REPO_CRED_ID}&quot;,
+      usernameVariable: &apos;USERNAME&apos;,
+      passwordVariable: &apos;PASSWORD&apos;]]) {
+        GIT_USER = &quot;${env.USERNAME}&quot;
+        GIT_PASSWORD=&quot;${env.PASSWORD}&quot;
+    }
+
+    sh &quot;git add .&quot;
+    sh &apos;git commit -am &quot;updated file in repo&quot;&apos;
+    //sh &quot;git remote set-url origin https://${username}:${password}@github.com/devopswest/Modifyrepo.git&quot;
+
+    echo &quot;USER: ${GIT_USER}&quot;
+    echo &quot;PASS: ${GIT_PASSWORD}&quot;
+
+    def repoUrl = &quot;https://${GIT_USER}:${GIT_PASSWORD}@&quot; + env.REPO_URL.substring(8)
+
+    print &quot;UPDATE REPO: ${repoUrl}&quot;
+
+
+    sh &quot;git remote set-url origin ${repoUrl}||echo \&quot;NONE\&quot;&quot;
+    sh &quot;git remote -v&quot;
+    //sh &quot;git push --tags origin ${env.REPO_BRANCH}&quot;
+    sh &quot;git push ${repoUrl} ${env.REPO_BRANCH}&quot;
+
+
+}
+
+def doBuildHistory(env) {
+    sh &quot;touch build.history&quot;
+    sh &quot;echo `date` - ${env.BUILD_TAG} &gt;&gt; build.history&quot;
+}
+
+def doAddTag(env) {
+    def app = getApplicationDetails()
+
+    def GIT_USER
+    def GIT_PASSWORD
+
+    withCredentials([[
+      $class: &apos;UsernamePasswordMultiBinding&apos;,
+      credentialsId: &quot;${env.REPO_CRED_ID}&quot;,
+      usernameVariable: &apos;USERNAME&apos;,
+      passwordVariable: &apos;PASSWORD&apos;]]) {
+        GIT_USER = &quot;${env.USERNAME}&quot;
+        GIT_PASSWORD=&quot;${env.PASSWORD}&quot;
+    }
+
+    def repoUrl = &quot;https://${GIT_USER}:${GIT_PASSWORD}@&quot; + env.REPO_URL.substring(8)
+    //Add BUILD TAG
+    sh &quot;git tag -a \&quot;version-${app.version}-build-${BUILD_NUMBER}\&quot; -m \&quot;Successfully Built\&quot;&quot;    
+    sh &quot;git push --tags ${repoUrl}&quot;
+}
+
+def doTraking(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***        CERATE TRAKING           ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    stage(&quot;Build History&quot;) {
+        doBuildHistory(env)
+    }
+    stage(&quot;Update Repo&quot;) {
+        doPush(env)
+    }
+
+    stage(&quot;Tag Build&quot;) {
+        doAddTag(env)
+    }
+}
+
+
+def doBuild(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***              BUILD              ***
+    ***************************************
+    &quot;&quot;&quot;
+    //sh &quot;npm run build&quot;
+    sh &quot;rm -R build||echo \&quot;\&quot;&quot;
+    sh &quot;rm -R target||echo \&quot;\&quot;&quot;
+    sh &quot;cicd build&quot;
+}
+
+def doTest(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***           TESTING               ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    stage(&quot;Unit Testing&quot;) {
+        doUnitTest(env)
+    }
+    stage(&quot;Coverage Analysis&quot;) {
+        doCodeCoverage(env)
+    }
+}
+
+def doScan(env) {
+
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***           SCANING               ***
+    ***************************************
+    &quot;&quot;&quot;
+    stage(&quot;Static Code Analysis&quot;) {
+        doStaticAnalysis(env)
+    }
+    stage(&quot;Security Scan&quot;) {
+        doSecurityScan(env)
+    }
+    stage(&quot;Sonar Qube Scan&quot;) {
+        //TODO: Sonar is failing
+        //doSonarQube(env)
+    }
+}
+
+
+def doFortify(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***           FORTIFY               ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    //TODO: FoP is failling
+    doFoP(env)
+    doFoD(env)
+    
+}
+
+def doStaticAnalysis(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***      STATIC CODE ANALYSIS       ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    sh &quot;cicd findbugs&quot;
+    sh &quot;cicd checkstyle&quot;
+    sh &quot;cicd pmd&quot;
+
+    //sh &quot;gradle -b pipeline.gradle findbugsMain checkstyleMain pmdMain&quot;
+
+    step([$class: &apos;CheckStylePublisher&apos;, pattern: &apos;build/reports/checkstyle/*.xml&apos;])
+    step([$class: &apos;FindBugsPublisher&apos;, pattern: &apos;build/reports/findbugs/*.xml&apos;])
+    step([$class: &apos;PmdPublisher&apos;, pattern: &apos;build/reports/pmd/*.xml&apos;])
+
+}
+
+def doSonarQube(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***           SONARQUBE             ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    //sh &quot;gradle -b pipeline.gradle sonarqube&quot;
+    sh &quot;cicd sonar&quot;
+}
+
+def doCodeCoverage(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***        COVERAGE REPORT          ***
+    ***************************************
+    &quot;&quot;&quot;
+
+
+    step([$class: &apos;JacocoPublisher&apos;,
+        classPattern: &apos;build/classes&apos;,
+        exclusionPattern: &apos;**/*Test*.class&apos;,
+        execPattern: &apos;build/jacoco/test.exec&apos;,
+        inclusionPattern: &apos;**/*.class&apos;,
+        maximumClassCoverage: &apos;50&apos;,
+        maximumInstructionCoverage: &apos;30&apos;, maximumLineCoverage: &apos;30&apos;,
+        maximumMethodCoverage: &apos;50&apos;, sourcePattern: &apos;/src/main/java&apos;])
+
+}
+
+def doArchive(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***           ARCHIVING             ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    step([$class: &apos;ArtifactArchiver&apos;,
+        artifacts: &apos;**/build/libs/*.war&apos;,
+        fingerprint: true])
+
+}
+
+def doArtifactoryArchive(env) {
+    def server = Artifactory.server(&apos;pwc-gcp-artifactory&apos;)
+    def buildInfo = Artifactory.newBuildInfo()
+    server.publishBuildInfo(buildInfo)
+}
+
+def doUnitTest(env) {
+    //sh &quot;npm test&quot;
+    sh &quot;cicd test&quot;
+    step([$class: &apos;JUnitResultArchiver&apos;, testResults: &apos;build/test-results/*.xml&apos;])
+}
+
+def doFoD(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***               FoD               ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    def app = getApplicationDetails()
+
+    step([$class: &apos;FodBuilder&apos;, filePattern: &apos;&quot;&quot;&apos;,
+        assessmentTypeId: &apos;170&apos;,
+        applicationName: app.code,
+        releaseName: app.release,
+        technologyStack: app.stack,
+        languageLevel: app.languageLevel,
+        runOpenSourceAnalysis: false,
+        isExpressScan: false, isExpressAudit: false,
+        doPollFortify: false, doPrettyLogOutput: false,
+        includeAllFiles: false, includeThirdParty: false])
+
+}
+
+def doFoP(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***               FoP               ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    def app = getApplicationDetails()
+
+    sh &quot;cicd fortify&quot;
+    step([$class: &apos;FindBugsPublisher&apos;, testResults: &apos;build/reports/fortify/report.*&apos;])
+}
+
+def doSecurityScan(env) {
+    stage(&quot;Fortify Scan&quot;) {
+        doFortify(env);
+    }
+    stage(&quot;Blackduck Scan&quot;) {
+        //TODO: Blackduck is failling
+        //doBlackDuck(env);
+    }
+    stage(&quot;Whitesource Scan&quot;) {
+        //TODO: Whitesource is failing
+        //doWhiteShource(env);
+    }
+}
+
+def doBlackDuck(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***           BLACK DUCK            ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    def app = getApplicationDetails()
+
+    hub_scan bomUpdateMaxiumWaitTime: &apos;5&apos;,
+        dryRun: false, hubProjectName: app.code,
+        hubProjectVersion: app.release,
+        hubVersionDist: &apos;EXTERNAL&apos;, hubVersionPhase: &apos;PLANNING&apos;,
+        scanMemory: &apos;4096&apos;, scans: [[scanTarget: &apos;&apos;]],
+        shouldGenerateHubReport: false
+}
+
+def doWhiteShource(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***           WHITESOURCE           ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    def app = getApplicationDetails()
+
+    def apiKey = ${env.API_KEY_WHITESOURCE}
+
+    if ( apiKey == null || apiKey.length()==0) {
+        apiKey=&quot;f350b639-e7cc-447b-a830-3737eee4a6c0&quot;;
+    }
+
+    // sh &apos;&apos;&apos;#!/bin/sh
+    // echo &apos;{
+    //     &quot;apiKey&quot;:&quot;${apiKey}&quot;,
+    //     &quot;checkPolicies&quot;:true,
+    //     &quot;productName&quot;:&quot;${app.code}&quot;,
+    //     &quot;productVer&quot;:&quot;${app.release}&quot;,
+    //     &quot;devDep&quot;: &quot;true&quot;
+    // } &gt; whitesource.config.json&apos;
+    // &apos;&apos;&apos;
+
+    def command = &apos;echo {&quot;apiKey&quot;:&quot;&apos; + apiKey + &apos;&quot;,&quot;checkPolicies&quot;:true,&quot;productName&quot;:&quot;&apos; + app.code + &apos;&quot;,&quot;productVer&quot;:&quot;&apos; + app.release + &apos;&quot;,&quot;devDep&quot;: &quot;true&quot;} &gt; whitesource.config.json&apos;
+
+    sh command
+
+    sh &apos;whitesource run&apos;
+}
+
+def doPackage(env) {
+
+    
+
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***           PACKAGING             ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    //sh &quot;cicd package dev ${env.BUILD_TAG}&quot;
+
+
+    def app = getApplicationDetails()
+    def config = getDeploymentDetails()
+
+    def v =  app.version.split(&apos;\\.&apos;)
+    def v1 = v[0]
+    def v2 = v[1]
+    def v3 = v[2]
+    
+    def branch = &quot;dev&quot;
+    // for (target in targets) {
+    //     echo &quot;Packaging  for ${target.key} ==&gt; ${target.value}&quot;
+    //     //sh &apos;/var/devops/cicd/scripts/package.sh&apos;
+    //     sh &quot;docker-compose run cicd package ${target.key}&quot;
+    // }
+
+    def imageName=&quot;${app.name}&quot;
+
+    def repo = env.DOCKER_REPO;
+ 
+    if (repo != null &amp;&amp; repo.length() &gt; 0) {
+        imageName = &quot;${repo}/&quot;+imageName
+    } else {
+        imageName = config.image;
+    }
+
+    def server=&quot;&quot;
+    if (env.DOCKER_REGISTRY != null &amp;&amp; env.DOCKER_REGISTRY.length() &gt; 0) {
+        imageName = &quot;${env.DOCKER_REGISTRY}/&quot;+imageName
+        server=env.DOCKER_REGISTRY;
+    }
+
+    //Build image
+    echo &quot;Building: ${imageName} ${v1} ${v2} ${v3}&quot;
+    def imageId = docker.build(imageName)
+
+    //org.jenkinsci.plugins.docker.workflow.Docker
+    echo &quot;Image: ${imageId.id}  ${imageId.parsedId.tag}  ${imageId.parsedId.userAndRepo} &quot;
+
+
+    //Tag Images
+    sh &quot;docker tag ${imageName} ${imageName}:${app.version}&quot;
+    sh &quot;docker tag ${imageName} ${imageName}:${branch}&quot;
+    sh &quot;docker tag ${imageName} ${imageName}:${v1}&quot;
+    sh &quot;docker tag ${imageName} ${imageName}:${v1}.${v2}&quot;
+    sh &quot;docker tag ${imageName} ${imageName}:${v1}.${v2}.${v3}&quot;
+    sh &quot;docker tag ${imageName} ${imageName}:build-${env.BUILD_NUMBER}&quot;
+
+
+    //Autihenticate
+    sh &quot;docker login -u ${env.DOCKER_USER} -p ${env.DOCKER_PASSWORD} ${server}&quot;
+
+    //Push images
+    sh &quot;docker push ${imageName}:${app.version}&quot;
+    sh &quot;docker push ${imageName}:${branch}&quot;
+    sh &quot;docker push ${imageName}:${v1}&quot;
+    sh &quot;docker push ${imageName}:${v1}.${v2}&quot;
+    sh &quot;docker push ${imageName}:${v1}.${v2}.${v3}&quot;
+    sh &quot;docker push ${imageName}:build-${env.BUILD_NUMBER}&quot;
+
+
+    //Show Images
+    sh &apos;echo &quot;Docker Images on Build Server&quot;&apos;
+    sh &quot;docker images|grep ${imageName}&quot;
+
+
+}
+
+def doDeploy(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***           DEPLOYING             ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    def app = getApplicationDetails()
+    def config = getDeploymentDetails()
+
+    def target = doDefineTarget(env)
+
+    //TODO: RFC Create is failing
+    //def changeNumber = doCreateRFC(env)
+
+    def imageName = doDeployImage(env)
+
+
+    //doCloseRFC(env, changeNumber)
+}
+
+
+
+def doDeployImage(env) {
+    def app = getApplicationDetails()
+    def config = getDeploymentDetails()
+
+    showImages(env, &quot;Before Deployment&quot;)
+
+
+    def currentImageName=getCurrentImage(env)
+    def operation=&quot;create&quot;
+ 
+    if (currentImageName == null || currentImageName.length()==0) {
+        operation=&quot;create&quot;
+        echo &quot;No image currently running&quot;
+    }
+    else {
+        operation=&quot;update&quot;
+        echo &quot;Current Imagen Running ${currentImageName}&quot;
+        createRollbackPoint(env, currentImageName)
+    }
+
+    echo &quot;Deploying ${config.module} to dev ==&gt; ${env.DOCKER_TARGET}&quot;
+
+    //sh &quot;cicd deploy-app dev ${env.DOCKER_TARGET} ${config.module}&quot;
+    
+    echo &quot;cicd deploy-service ${config.module} ./docker-compose.yml ${env.DOCKER_TARGET} ${operation}&quot;
+    sh &quot;cicd deploy-service ${config.module} ./docker-compose.yml ${env.DOCKER_TARGET} ${operation}||echo \&quot;\&quot;&quot;
+
+
+    showImages(env, &quot;After Deployment&quot;)
+
+
+    def deploymentStatus = healthCheck(env)
+
+    echo &quot;Deployment Status: [ ${deploymentStatus} ]&quot;
+
+    if ( deploymentStatus == &quot;UP&quot; ) {
+       //echo &quot;Close RFC ${changeNumber}&quot;
+       //doCloseRFC(env, changeNumber)
+    } else {
+        echo &quot;Something Went Wrong -- Revert Deployment&quot;
+        if (currentImageName == null) {
+            echo &quot;Nothing to revert&quot;
+        } else {
+            rollback(env, currentImageName)
+        }
+    }
+
+
+    //Remove rollback point
+    removeRollbackPoint(env, currentImageName)
+            
+    showImages(env, &quot;After Completion&quot;)
+
+    return currentImageName
+}
+
+
+def doCleanUp(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***           CLEANING              ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    echo &quot;Cleanning app leftovers&quot;
+    sh &quot;docker rm \$(docker ps -a -q)||echo \&quot;NONE\&quot;&quot;
+    sh &quot;docker rmi \$(docker images -a -q)||echo \&quot;NONE\&quot;&quot;
+
+    sh &quot;rm docker-compose-tmp.yml||echo \&quot;NONE\&quot;&quot;
+}
+
+//
+//
+// HELPER functions
+//
+//
+def healthCheck(env) {
+    def app = getApplicationDetails()
+    def config = getDeploymentDetails()
+
+    echo &quot;**** Wait for APP to be UP ...&quot;
+    def target = &quot;${env.DOCKER_TARGET}&quot;
+
+    //def serverTarget=target.split(&apos;//&apos;)​​​[1].split(&apos;:&apos;)[0]​​​
+    def serverTarget=&quot;172.10.10.10&quot;
+    echo &quot;SERVER: ${serverTarget}&quot;
+    echo &quot;cicd wait-for-it ${serverTarget}:${config.port} -t 120&quot;
+    sh &quot;cicd wait-for-it ${serverTarget}:${config.port} -t 120||echo \&quot;SOMETHING-HAPPENED\&quot;&quot;
+    
+    def HEALTH_CHECK_PATH=&quot;management/health&quot;
+    echo &quot;CHECK: cicd check http://${serverTarget}:${config.port}/${HEALTH_CHECK_PATH}&quot;
+
+    def healthCheckURL = &quot;http://${serverTarget}:${config.port}/${HEALTH_CHECK_PATH}&quot;
+    def CURL_CMD=&quot;curl -s -f -o /dev/null --max-time 5 \&quot;${healthCheckURL}\&quot; &amp;&amp; echo UP||echo DOWN&quot;
+
+
+
+    //def deploymentStatus= sh(returnStdout: true, script:&quot;cicd check http://${serverTarget}:${config.port}/${HEALTH_CHECK_PATH}&quot;)
+    def deploymentStatus= sh(returnStdout: true, script:&quot;${CURL_CMD}&quot;)
+    deploymentStatus = deploymentStatus.replace(&apos;\n&apos;,&apos;&apos;)
+
+    return deploymentStatus
+
+}
+
+def showImages(env, message) {
+
+    def app = getApplicationDetails()
+    def config = getDeploymentDetails()
+
+    echo &quot;Images ${message}&quot;
+    sh &quot;docker -H ${env.DOCKER_TARGET} images|grep ${config.module}||echo \&quot;NONE\&quot;&quot;
+
+    echo &quot;Running Service&quot;
+    sh &quot;docker -H ${env.DOCKER_TARGET} service ps ${config.module}||echo \&quot;\&quot;&quot;
+
+}
+
+def doDefineTarget(env) {
+    def app = getApplicationDetails()
+    def config = getDeploymentDetails()
+
+    // for (target in targets) {
+    //     echo &quot;Deploying to ${target.key} ==&gt; ${target.value}&quot;
+    //     //sh &apos;/var/devops/cicd/scripts/deploy.sh&apos;
+    //     sh &quot;docker-compose run cicd deploy ${target.key} ${target.value}&quot;
+    // }
+    env.DOCKER_TARGET = &quot;${env.DOCKER_TARGET_local}&quot;
+    echo &quot;TARGET: ${env.DOCKER_TARGET}&quot;
+}
+
+def createRollbackPoint(env, currentImageName){
+    //Remove Tag if present
+    def imageName=currentImageName.split(&quot;:&quot;)[0]
+    echo &quot;REmoved Tag: ${imageName}&quot;
+
+    sh &quot;docker -H ${env.DOCKER_TARGET} rmi -f ${imageName}:rollback||echo \&quot;ROLLBACK NOT EXISTS\&quot;&quot;
+    sh &quot;docker -H ${env.DOCKER_TARGET} tag ${imageName} ${imageName}:roolback||echo \&quot;SOMETHING-HAPPENED\&quot;&quot;
+
+    echo &quot;Images Before Deployment&quot;
+    sh &quot;docker -H ${env.DOCKER_TARGET} images|grep ${imageName}&quot;
+
+}
+
+def rollback(env, currentImageName){
+    def app = getApplicationDetails()
+    def config = getDeploymentDetails()
+
+    //Remove Tag if present
+    def imageName=currentImageName.split(&quot;:&quot;)[0]
+    echo &quot;REmoved Tag: ${imageName}&quot;
+
+    echo &quot;Reverting back to Image ${currentImageName}  &quot;
+    sh &quot;docker -H ${env.DOCKER_TARGET} rmi ${currentImageName}&quot;
+    sh &quot;docker -H ${env.DOCKER_TARGET} service update --image ${imageName}:rollback ${config.module}&quot;
+
+
+}
+
+
+def removeRollbackPoint(env, currentImageName){
+    if (currentImageName != null) {
+        def imageName=currentImageName.split(&quot;:&quot;)[0]
+        echo &quot;REmoved Tag: ${imageName}&quot;
+        sh &quot;docker -H ${env.DOCKER_TARGET} rmi -f ${imageName}:rollback||echo \&quot;NONE\&quot;&quot;
+    }
+
+}
+
+def getCurrentImage(env) {
+    def app = getApplicationDetails()
+    def config = getDeploymentDetails()
+
+    def currentImageName=sh(returnStdout: true, script:&quot;docker -H ${env.DOCKER_TARGET} service inspect ${config.module} --format=&apos;{{.Spec.TaskTemplate.ContainerSpec.Image}}&apos;||echo \&quot;\&quot;&quot;).trim()
+
+ 
+    if (currentImageName == null || currentImageName.length()==0) {
+        echo &quot;No image currently running&quot;
+    }
+    else {
+        echo &quot;Current Imagen Running ${currentImageName}&quot;
+    }
+
+    return currentImageName;
+}
+
+def getApplicationDetails() {
+
+    echo &quot;Reading Application Properties&quot;
+
+    def myJson = readFile &quot;package.json&quot;
+    def jsonSlurper = new JsonSlurper()
+    def jsonObject = jsonSlurper.parseText(myJson)
+
+    def name = &quot;$jsonObject.name&quot;
+    def version = &quot;$jsonObject.version&quot;
+    def description = &quot;$jsonObject.description&quot;
+
+    //TODO: This is causing a serialization error
+    def lifecycle = []; //defineLifecyleRules();
+
+    def app = [
+        name: &quot;$jsonObject.name&quot;,
+        version: &quot;$jsonObject.version&quot;,
+        description: &quot;$jsonObject.description&quot;,
+        code: &quot;$jsonObject.code&quot;,
+        release: &quot;$jsonObject.release&quot;,
+        stack: &quot;$jsonObject.stack&quot;,
+        languageLevel: &quot;$jsonObject.languageLevel&quot;,
+        assestmentType: &quot;$jsonObject.assestmentType&quot;,
+        lifecycle: lifecycle
+        //rfc: jsonObject.rfc
+    ]
+
+    jsonSlurper = null
+    jsonObject = null
+
+    return app
+}
+
+def getDeploymentDetails() {
+
+    def app = getApplicationDetails()
+
+    echo &quot;Reading Application Compose/Deployment Details&quot;
+
+    sh &quot;yaml2json docker-compose.yml &gt; docker-compose.json&quot;
+    def myYML = readFile &quot;docker-compose.json&quot;
+
+    def jsonSlurper = new JsonSlurper()
+    def jsonObject = jsonSlurper.parseText(myYML)
+
+    def moduleName=app.name;
+    def module = jsonObject.services[app.name];
+    if (module == null) {
+        module = jsonObject.services[&quot;app&quot;];
+        moduleName=&quot;app&quot;;
+    }
+
+    def port = module.ports[0].split(&apos;:&apos;)[0]
+
+    def config = [
+        module: moduleName,
+        image: module.image,
+        port: port
+    ]
+
+    //sh &quot;rm docker-compose.json||echo \&quot;NONE\&quot;&quot;
+
+    jsonSlurper = null
+    jsonObject = null
+
+    return config
+}
+
+def getCredentials(userId, key, value) {
+    def USER, PASSWORD
+    withCredentials([[
+    $class: &apos;UsernamePasswordMultiBinding&apos;,
+        credentialsId: userId,
+        usernameVariable: &apos;USER&apos;,
+        passwordVariable: &apos;PASSWORD&apos;]]) {
+        USER = &quot;${env.USER}&quot;
+        PASSWORD = &quot;${env.PASSWORD}&quot;
+    }
+
+    echo &quot;${userId}_USER: $USER&quot;
+    echo &quot;${userId}_PASSWORD: $PASSWORD&quot;
+
+    // e = new hudson.EnvVars()
+    // e.put(&apos;DOCKER_TARGET&apos;, DOCKER_TARGET)
+    // hudson.model.Environment.create(e)
+
+    return [USER, PASSWORD]
+}
+
+def defineLifecyleRules() {
+    String jobName=&quot;${env.JOB_NAME}&quot;
+    String lifecicleType=&quot;light&quot;
+    def targets = [:]
+
+    if (jobName.contains(&quot;checkin&quot;)) {
+        lifecicleType=&quot;light&quot;
+        targets.put(&quot;dev&quot;,&quot;${env.DOCKER_TARGET_dev}&quot;)
+    } else if (jobName.contains(&quot;nigthly&quot;)){
+        lifecicleType=&quot;medium&quot;
+        targets.put(&quot;test&quot;,&quot;${env.DOCKER_TARGET_test}&quot;)
+    } else if (jobName.contains(&quot;weekly&quot;)) {
+        lifecicleType=&quot;complete&quot;
+        targets.put(&quot;test&quot;,&quot;${env.DOCKER_TARGET_test}&quot;)
+        targets.put(&quot;stage&quot;,&quot;${env.DOCKER_TARGET_stage}&quot;)
+    } else if (jobName.contains(&quot;deploy&quot;)) {
+        lifecicleType=&quot;complete&quot;
+        targets.put(&quot;test&quot;,&quot;${env.DOCKER_TARGET_test}&quot;)
+        targets.put(&quot;stage&quot;,&quot;${env.DOCKER_TARGET_stage}&quot;)
+    }
+
+    echo &quot;DEFINED TARGETS for lifecycle $lifecicleType:&quot;
+    // for (t in targets) {
+    //     String k = &quot;${t.key}&quot;
+    //     String v = &quot;${t.value}&quot;
+    //     print &quot;${k} =&gt; ${v}&quot;
+    // }
+
+    def lifecycle = [
+        type: lifecicleType,
+        targets: targets
+    ];
+    return lifecycle
+}
+
+def configureBuild(env) {
+    echo &quot;CURRENT FODLER ${pwd}&quot;
+    echo &quot;BUILD_ID#: ${env.BUILD_ID}&quot;
+    echo &quot;BUILD_NUMBER#: ${env.BUILD_NUMBER}&quot;
+    echo &quot;BUILD_TAG#: ${env.BUILD_TAG}&quot;
+    echo &quot;BUILD_URL#: ${env.BUILD_URL}&quot;
+    echo &quot;NODE_NAME#: ${env.NODE_NAME}&quot;
+    echo &quot;JOB_NAME: ${env.JOB_NAME}&quot;
+
+    sh &quot;echo \&quot;Current Environment\&quot;&quot;
+    sh &quot;env&quot;
+
+
+    def params =
+          &quot; -u 1000:998 &quot; +
+//          &quot; -e DOCKER_TARGET=${env.DOCKER_TARGET}&quot; +
+          &quot; -e SWARM_MASTER=${env.SWARM_MASTER}&quot; +
+          &quot; -e DOCKER_USER=${env.DOCKER_USER}&quot; +
+          &quot; -e DOCKER_PASSWORD=${env.DOCKER_PASSWORD}&quot; +
+//          &quot; -v /m2repo:/m2repo&quot; +
+          &quot; -v /var/run/docker.sock:/var/run/docker.sock&quot; +
+          &quot; -v /usr/bin/docker:/usr/bin/docker&quot; +
+//          &quot; -v /var/jenkins_home:/var/jenkins_home&quot; +
+//          &quot; -v ${PWD}:/var/app&quot; +
+          &quot; -e API_KEY=&apos;${env.API_KEY}&apos;&quot; +
+          &quot; -e API_KEY_SECRET=&apos;${env.API_KEY_SECRET}&apos;&quot; +
+          &quot; -e RFC_CREATE_IMPLEMENTATION_API_URL=&apos;${env.RFC_CREATE_IMPLEMENTATION_API_URL}&apos;&quot; +
+          &quot; -e RFC_EVALUATION_CLOSED_API_URL=&apos;${env.RFC_EVALUATION_CLOSED_API_URL}&apos;&quot; +
+
+
+          &quot;&quot;
+
+    env.DOCKER_PARAMS = params
+
+    echo &quot;PARAMS: &quot; + params
+    return params
+}
+
+//TODO: check stash &amp; unstash to parellize
+
+def doDockerPush(env) {
+    def app = getApplicationDetails()
+
+    withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;docker_creds_id&apos;,usernameVariable: &apos;USERNAME&apos;,passwordVariable: &apos;PASSWORD&apos;]]) {
+      echo &quot;${env.USERNAME} ${env.PASSWORD}&quot;
+      sh &quot;docker login -u $env.USERNAME -p $env.PASSWORD ${env.DOCKER_REGISTRY}&quot;
+
+      def imageName=&quot;${env.DOCKER_REPO}/${app.name}&quot;
+      def imageTag=&quot;${env.DOCKER_REPO}/${app.name}:${env.BUILD_TAG}&quot;
+
+      if (env.DOCKER_REGISTRY.length() &gt; 0) {
+        imageName = &quot;${env.DOCKER_REGISTRY}/&quot;+imageName
+      }
+      sh &quot;docker push ${imageName}&quot;
+    }
+}
+
+def doCreateRFC(env) {
+
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***           CERATE RFC            ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    def app = getApplicationDetails()
+
+    def certsFolder = &quot;/var/devops/cicd/ssl&quot;
+
+    def briefDescription=&quot;Deployment of CMA BSL component in BSL&quot; 
+    def category=&quot;Application Infrastructure Management&quot;
+    def subcategory=&quot;US Lombardi&quot;
+    def assignmentGroup=&quot;US IT APP SPT - ENVOY&quot;
+    def initiatedBy=&quot;ssingh145&quot;
+    def changeCoordinator=&quot;rmaheshwar008&quot;
+    def reason=&quot;business&quot;
+    def service=&quot;Envoy&quot;
+    def backoutComplexity=&quot;Low&quot;
+    def impact=&quot;3&quot;
+    def urgency=&quot;3&quot;
+    def riskAssessment=&quot;3&quot;
+    def description=&quot;\&quot;This RFC has been created for the purpose of deploying CMA BSL component on BSL \&quot;,\&quot;The deployment is required to deploy the latest CMA BSL code on so that instance migration testing can be done on for next CMA release.\&quot;&quot;
+    def affectedCI=&quot;\&quot;matlkgsswwhs011\&quot;,\&quot;matlkgsswwhs012\&quot;&quot;
+    def lifeCycleStatus=&quot;Live&quot;
+    def environment=&quot;Stage&quot;
+    def plan=&quot;Test deployment plan.&quot;
+    def backoutPlan=&quot;Test backout plan.&quot;
+    def changeImplementer=&quot;ssingh145&quot;
+    def template=&quot;Standard RFC Template&quot;
+    def riskAssessmentMitigation=&quot;Sample Risk Assessment and Mitigation comments.&quot;
+
+
+    def requestedEndDate=&quot;2016-07-18T04:12:32.065Z&quot;
+    def plannedStartDate=&quot;2016-07-17T18:12:32.065Z&quot;
+    def plannedEndDate=&quot;2016-07-18T03:12:32.065Z&quot;
+
+def RFC_API_KEY=&apos;l7xxb0e98f0b523546c6ab5bfbad3735f718&apos;
+def RFC_API_KEY_SECRET=&apos;426b784ed6e340e78d50ace51db37a05&apos;
+
+    def command = &quot;curl -s -f&quot;
+    command += &quot; --cacert ${certsFolder}/issuing1.pem&quot;
+    command += &quot; --cacert ${certsFolder}/policy.pem&quot;
+    command += &quot; --cacert ${certsFolder}/root.pem&quot;
+    command += &quot; -X POST&quot;
+    command += &quot; -H \&apos;Content-Type: application/json\&apos;&quot;
+    command += &quot; -H \&apos;Accept: application/json\&apos;&quot;
+    command += &quot; -H \&apos;APIKey: ${RFC_API_KEY}\&apos;&quot;
+    command += &quot; -H \&apos;APIKeySecret: ${RFC_API_KEY_SECRET}\&apos;&quot;
+    command += &quot; -d \&apos;{  \&quot;keys\&quot;: {},  \&quot;instance\&quot;: {\&quot;Service\&quot;: \&quot;${service}\&quot;, \&quot;LifeCycleStatus\&quot;: \&quot;${lifeCycleStatus}\&quot;, \&quot;middle\&quot;: {}, \&quot;Urgency\&quot;: \&quot;${urgency}\&quot;,\&quot;Impact\&quot;: \&quot;${impact}\&quot;,\&quot;BackoutComplex\&quot;: \&quot;${backoutComplexity}\&quot;,\&quot;description.structure\&quot;: {\&quot;Description\&quot;: {\&quot;Description\&quot;: [${description}]},\&quot;AffectedCI\&quot;: {\&quot;AffectedCI\&quot;: [${affectedCI}]}},\&quot;RequestedEndDate\&quot;: \&quot;${requestedEndDate}\&quot;,\&quot;Environment\&quot;: \&quot;${environment}\&quot;, \&quot;Plan\&quot;: \&quot;${plan}\&quot;, \&quot;BackoutPlan\&quot;: \&quot;${backoutPlan}\&quot;, \&quot;StandardChange\&quot;: \&quot;true\&quot;, \&quot;ChangeImplementer\&quot;: \&quot;${changeImplementer}\&quot;, \&quot;Template\&quot;: \&quot;${template}\&quot;, \&quot;RiskAssessmentMitigation\&quot;: {\&quot;RiskAssessmentMitigation\&quot;: [${riskAssessmentMitigation}]} , \&quot;header\&quot;: {\&quot;RiskAssessment\&quot;: \&quot;${riskAssessment}\&quot;, \&quot;InitiatedBy\&quot;:\&quot;${initiatedBy}\&quot;, \&quot;briefDescription\&quot;: \&quot;${briefDescription}\&quot;,\&quot;Category\&quot;: \&quot;${category}\&quot;,\&quot;ChangeCoordinator\&quot;: \&quot;${changeCoordinator}\&quot;,\&quot;AssignmentGroup\&quot;: \&quot;${assignmentGroup}\&quot;,\&quot;Reason\&quot;: \&quot;${reason}\&quot;,\&quot;Subcategory\&quot;: \&quot;${subcategory}\&quot;,\&quot;PlannedStart\&quot;: \&quot;${plannedStartDate}\&quot;,\&quot;PlannedEnd\&quot;: \&quot;${plannedEndDate}\&quot;}}}\&apos;&quot;
+    command += &quot; &apos;${env.RFC_CREATE_IMPLEMENTATION_API_URL}&apos;&quot;;
+
+    echo &quot;COMMAND: ${command}&quot;
+
+    //response=$(eval $CURL_CMD);
+    //gitCommit = sh(returnStdout: true, script: &apos;git rev-parse HEAD&apos;).trim()
+    // short SHA, possibly better for chat notifications, etc.
+    //shortCommit = gitCommit.take(6)
+
+    def response = sh(returnStdout: true, script:&quot;${command}&quot;).trim()
+
+    echo &quot;RESPONSE: ${response}&quot;
+
+    //echo $response | sed -e &apos;s/^.*&quot;changeNumber&quot;[ ]*:[ ]*&quot;//&apos; -e &apos;s/&quot;.*//&apos;
+    def changeNumber = &quot;0000&quot;
+
+    return changeNumber
+}
+
+def doCloseRFC(env, changeNumber) {
+
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***           CLOSE RFC             ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    def app = getApplicationDetails()
+
+    def certsFolder = &quot;/var/devops/cicd/ssl&quot;
+
+    def startDate=&quot;2016-07-17T18:15:00.000Z&quot;
+    def endDate=&quot;2016-07-18T02:00:00.000Z&quot;
+    def closureComments=&quot;RFC Implemented Successfully.&quot;
+
+def RFC_API_KEY=&apos;l7xxb0e98f0b523546c6ab5bfbad3735f718&apos;
+def RFC_API_KEY_SECRET=&apos;426b784ed6e340e78d50ace51db37a05&apos;
+
+    def command = &quot;curl -s -f&quot;
+    command += &quot; --cacert ${certsFolder}/issuing1.pem&quot;
+    command += &quot; --cacert ${certsFolder}/policy.pem&quot;
+    command += &quot; --cacert ${certsFolder}/root.pem&quot;
+    command += &quot; -X POST&quot;
+    command += &quot; -H \&apos;Content-Type: application/json\&apos;&quot;
+    command += &quot; -H \&apos;Accept: application/json\&apos;&quot;
+    command += &quot; -H \&apos;APIKey: ${RFC_API_KEY}\&apos;&quot;
+    command += &quot; -H \&apos;APIKeySecret: ${RFC_API_KEY_SECRET}\&apos;&quot;
+    command += &quot; -d \&apos;{ \&quot;keys\&quot;: { \&quot;changeNumber\&quot;: \&quot;${changeNumber}\&quot;}, \&quot;instance\&quot;: { \&quot;middle\&quot;: { \&quot;ActualOutageStart\&quot;: \&quot;${startDate}\&quot;, \&quot;ActualOutageEnd\&quot;: \&quot;${endDate}\&quot; }, \&quot;ClosureComments\&quot;: { \&quot;ClosureComments\&quot;: [${closureComments}]}}}\&apos;&quot;
+    command += &quot; &apos;${env.RFC_EVALUATION_CLOSED_API_URL}&apos;&quot;;
+
+    echo &quot;COMMAND: ${command}&quot;
+
+    sh &quot;${command}&quot;
+}
+
+def doIncreaseVersion(env) {
+    echo &quot;&quot;&quot;
+    ***************************************
+    ***       INCREASE VERSION          ***
+    ***************************************
+    &quot;&quot;&quot;
+
+    def app = getApplicationDetails()
+    echo &quot;Current Version: ${app.version}&quot;
+
+    def v =  app.version.split(&apos;\\.&apos;)
+    def v1 = v[0].toInteger()
+    def v2 = v[1].toInteger()
+    def v3 = v[2].toInteger()
+
+    def increase = &quot;PATCH&quot;
+    if ( increase == &quot;MAJOR&quot; ) {
+      echo &quot;INCREATE MAJOR&quot;
+      v1++;
+    }
+    if ( increase == &quot;MINOR&quot; ) {
+        echo &quot;INCREATE MINOR&quot;
+        v2++;
+    }
+    if ( increase == &quot;PATCH&quot; ) {
+        echo &quot;INCREATE PATCH&quot;
+        v3++;
+    }
+
+    def newVersion=&quot;${v1}.${v2}.${v3}&quot;
+
+    sh &quot;sed -i \&quot;s|\\(version = &apos;\\)\\([0-9]*\\)\\([.]\\)\\([0-9]*\\)\\([.]\\)\\([0-9]*\\)\\([-A-Z]*\\)\\([&apos;]\\)|version = &apos;${newVersion}&apos;|\&quot; build.gradle||echo \&quot;\&quot;&quot;
+    sh &quot;sed -i \&quot;s|\\(&lt;version&gt;\\)\\([0-9]*\\)\\([.]\\)\\([0-9]*\\)\\([.]\\)\\([0-9]*\\)\\([-A-Z]*\\)?\\(&lt;/version&gt;\\)|&lt;version&gt;${newVersion}&lt;/version&gt;|\&quot; pom.xml||echo \&quot;\&quot;&quot;
+    sh &quot;sed -i \&quot;s|\\([0-9]*\\)\\([.]\\)\\([0-9]*\\)\\([.]\\)\\([0-9]*\\)\\([-A-Z]*\\)|${newVersion}|\&quot; package.json||echo \&quot;\&quot;&quot;
+
+
+    app = getApplicationDetails()
+    echo &quot;NEW Version: ${app.version}&quot;
+}</script>
+    <sandbox>true</sandbox>
   </definition>
   <triggers/>
 </flow-definition>
