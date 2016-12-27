@@ -61,6 +61,7 @@
       <properties class="hudson.model.View$PropertyList"/>
       <jobNames>
         <comparator class="hudson.util.CaseInsensitiveComparator"/>
+        <string>checkin</string>
       </jobNames>
       <jobFilters/>
       <columns>
