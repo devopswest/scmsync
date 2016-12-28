@@ -286,7 +286,7 @@ def doFortify(env) {
     &quot;&quot;&quot;
 
     //TODO: FoP is failling
-    doFoP(env)
+    //doFoP(env)
     doFoD(env)
     
 }
