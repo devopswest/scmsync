@@ -503,7 +503,7 @@ def doPackage(env) {
 
     def imageName=&quot;${app.name}&quot;
 
-    def repo =&quot;{params.DOCKER_REPO}&quot;
+    def repo = env.DOCKER_REPO;
  
     if (repo != null &amp;&amp; repo.length() &gt; 0) {
         imageName = &quot;${repo}/&quot;+imageName
@@ -513,8 +513,8 @@ def doPackage(env) {
 
     def server=&quot;&quot;
     if (env.DOCKER_REGISTRY != null &amp;&amp; env.DOCKER_REGISTRY.length() &gt; 0) {
-        imageName = &quot;${params.DOCKER_REGISTRY}/&quot;+imageName
-        server=&quot;${params.DOCKER_REGISTRY}&quot;
+        imageName = &quot;${env.DOCKER_REGISTRY}/&quot;+imageName
+        server=env.DOCKER_REGISTRY;
     }
 
     //Build image
