@@ -24,6 +24,16 @@
           <description></description>
           <defaultValue>https://Saikrishna_Gogula@bitbucket.org/pwcadc/adcclientms.git</defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DOCKER_REPO</name>
+          <description></description>
+          <defaultValue>saikrishnagogula/adcclientms</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DOCKER_REGISTRY</name>
+          <description></description>
+          <defaultValue>https://index.docker.io/v1/</defaultValue>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -93,7 +103,7 @@ def doPullCredentials(env) {
     def DOCKER_USER, DOCKER_PASSWORD
     withCredentials([[
     $class: &apos;UsernamePasswordMultiBinding&apos;,
-        credentialsId: &apos;docker_creds_id&apos;,
+        credentialsId: &apos;d26e215d-5e39-42e6-ba6f-9f832984a4ed&apos;,
         usernameVariable: &apos;DOCKER_USER&apos;,
         passwordVariable: &apos;DOCKER_PASSWORD&apos;
     ]]) {
@@ -250,8 +260,8 @@ def doTest(env) {
     ***************************************
     &quot;&quot;&quot;
 
-    //stage &apos;Unit Testing&apos;
-    //doUnitTest(env)
+    stage &apos;Unit Testing&apos;
+    doUnitTest(env)
     
     stage &apos;Coverage Analysis&apos;
     doCodeCoverage(env)
@@ -317,8 +327,8 @@ def doSonarQube(env) {
     ***************************************
     &quot;&quot;&quot;
 
-    //sh &quot;gradle -b pipeline.gradle sonarqube&quot;
-    sh &quot;cicd sonar&quot;
+    sh &quot;gradle -b pipeline.gradle sonarqube&quot;
+    //sh &quot;cicd sonar&quot;
 }
 
 def doCodeCoverage(env) {
@@ -361,7 +371,8 @@ def doArtifactoryArchive(env) {
 
 def doUnitTest(env) {
     //sh &quot;npm test&quot;
-    sh &quot;cicd test&quot;
+    //sh &quot;cicd test&quot;
+    sh &quot;gradle -b pipeline.gradle test jacocoTestReport&quot;
     step([$class: &apos;JUnitResultArchiver&apos;, testResults: &apos;build/test-results/*.xml&apos;])
 }
 
@@ -492,7 +503,7 @@ def doPackage(env) {
 
     def imageName=&quot;${app.name}&quot;
 
-    def repo = env.DOCKER_REPO;
+    def repo =&quot;{params.DOCKER_REPO}&quot;
  
     if (repo != null &amp;&amp; repo.length() &gt; 0) {
         imageName = &quot;${repo}/&quot;+imageName
@@ -502,8 +513,8 @@ def doPackage(env) {
 
     def server=&quot;&quot;
     if (env.DOCKER_REGISTRY != null &amp;&amp; env.DOCKER_REGISTRY.length() &gt; 0) {
-        imageName = &quot;${env.DOCKER_REGISTRY}/&quot;+imageName
-        server=env.DOCKER_REGISTRY;
+        imageName = &quot;${params.DOCKER_REGISTRY}/&quot;+imageName
+        server=&quot;${params.DOCKER_REGISTRY}&quot;&quot;
     }
 
     //Build image
