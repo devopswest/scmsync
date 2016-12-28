@@ -485,7 +485,7 @@ def doPackage(env) {
 
     //sh &quot;cicd package dev ${env.BUILD_TAG}&quot;
 
-
+    sh &quot;sudo apt-get install libghc-yaml-dev&quot;
     def app = getApplicationDetails()
     def config = getDeploymentDetails()
 
