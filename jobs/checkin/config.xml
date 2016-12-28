@@ -514,7 +514,7 @@ def doPackage(env) {
     def server=&quot;&quot;
     if (env.DOCKER_REGISTRY != null &amp;&amp; env.DOCKER_REGISTRY.length() &gt; 0) {
         imageName = &quot;${params.DOCKER_REGISTRY}/&quot;+imageName
-        server=&quot;${params.DOCKER_REGISTRY}&quot;&quot;
+        server=&quot;${params.DOCKER_REGISTRY}&quot;
     }
 
     //Build image
