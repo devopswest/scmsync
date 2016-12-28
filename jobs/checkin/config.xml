@@ -250,8 +250,8 @@ def doTest(env) {
     ***************************************
     &quot;&quot;&quot;
 
-    stage &apos;Unit Testing&apos;
-    doUnitTest(env)
+    //stage &apos;Unit Testing&apos;
+    //doUnitTest(env)
     
     stage &apos;Coverage Analysis&apos;
     doCodeCoverage(env)
