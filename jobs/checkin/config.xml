@@ -35,9 +35,8 @@ node {
         doPullCredentials(env)
 
         //https://wiki.jenkins-ci.org/display/JENKINS/Building+a+software+project#Buildingasoftwareproject-below
-        //stage(&quot;Configure&quot;) {
-        //    configureBuild(env)
-        //}
+        stage &apos;Configure&apos; 
+        configureBuild(env)
 
         //Force a pull
         //sh &quot;docker pull easydevops/cicd:java&quot;
@@ -50,46 +49,37 @@ node {
         def img = docker.image(&apos;easydevops/cicd:java&apos;)
         img.inside(env.DOCKER_PARAMS)
         {
-            stage(&quot;Pull ${env.REPO_BRANCH}&quot;) {
-                doPull(env)
-            }
+            stage &quot;Pull ${params.REPO_BRANCH}&quot;
+            doPull(env)
+            
+            stage &apos;Version&apos;
+            doIncreaseVersion(env)
 
-            stage(&apos;Version&apos;) {
-                doIncreaseVersion(env)
-            }
+            stage &apos;Build&apos;
+            doBuild(env)
+            
 
-            stage(&apos;Build&apos;) {
-                doBuild(env)
-            }
+            stage &apos;Test&apos;
+            //TODO: Review. Test is failing
+            doTest(env)
 
-            stage(&apos;Test&apos;) {
-                //TODO: Review. Test is failing
-                //doTest(env)
-            }
+            stage &apos;Scan&apos;
+            doScan(env)
 
-            stage(&apos;Scan&apos;) {
-                doScan(env)
-            }
+            stage &apos;Archive&apos;
+            doArchive(env)
+            
+            stage &apos;Package&apos;
+            doPackage(env)
 
-            stage(&apos;Archive&apos;) {
-                doArchive(env)
-            }
+            stage &apos;Deploy&apos;
+            doDeploy(env)
 
-            stage(&apos;Package&apos;) {
-                doPackage(env)
-            }
+            stage &apos;Push&apos;
+            doTraking(env)
 
-            stage(&quot;Deploy&quot;) {
-                doDeploy(env)
-            }
-
-            stage(&quot;Push&quot;) {
-                doTraking(env)
-            }
-
-            stage(&quot;Clean-up&quot;) {
-                doCleanUp(env)
-            }
+            stage &apos;Clean-up&apos;
+            doCleanUp(env)
         }
 }
 
@@ -128,13 +118,13 @@ def doPull(env) {
     &quot;&quot;&quot;
 
     checkout([$class: &apos;GitSCM&apos;,
-        branches: [[name: &quot;*/${env.REPO_BRANCH}&quot;]],
+        branches: [[name: &quot;*/${params.REPO_BRANCH}&quot;]],
         doGenerateSubmoduleConfigurations: false,
         extensions: [],
         submoduleCfg: [],
         userRemoteConfigs:[[
-            credentialsId: &quot;${env.REPO_CRED_ID}&quot;,
-            url: &quot;${env.REPO_URL}&quot;
+            credentialsId: &quot;${params.REPO_CRED_ID}&quot;,
+            url: &quot;${params.REPO_URL}&quot;
         ]]
     ])
 
@@ -147,7 +137,7 @@ def doPull(env) {
     sh &quot;git clean -df||echo \&quot;\&quot;&quot;
     sh &quot;git reset --hard||echo \&quot;\&quot;&quot;
 
-    sh &quot;git checkout ${env.REPO_BRANCH}&quot;
+    sh &quot;git checkout ${params.REPO_BRANCH}&quot;
     sh &quot;git show-branch&quot;
     sh &quot;git clean -df||echo \&quot;\&quot;&quot;
     sh &quot;git reset --hard||echo \&quot;\&quot;&quot;
@@ -168,7 +158,7 @@ def doPush(env){
 
     withCredentials([[
       $class: &apos;UsernamePasswordMultiBinding&apos;,
-      credentialsId: &quot;${env.REPO_CRED_ID}&quot;,
+      credentialsId: &quot;${params.REPO_CRED_ID}&quot;,
       usernameVariable: &apos;USERNAME&apos;,
       passwordVariable: &apos;PASSWORD&apos;]]) {
         GIT_USER = &quot;${env.USERNAME}&quot;
@@ -190,7 +180,7 @@ def doPush(env){
     sh &quot;git remote set-url origin ${repoUrl}||echo \&quot;NONE\&quot;&quot;
     sh &quot;git remote -v&quot;
     //sh &quot;git push --tags origin ${env.REPO_BRANCH}&quot;
-    sh &quot;git push ${repoUrl} ${env.REPO_BRANCH}&quot;
+    sh &quot;git push ${repoUrl} ${params.REPO_BRANCH}&quot;
 
 
 }
@@ -208,7 +198,7 @@ def doAddTag(env) {
 
     withCredentials([[
       $class: &apos;UsernamePasswordMultiBinding&apos;,
-      credentialsId: &quot;${env.REPO_CRED_ID}&quot;,
+      credentialsId: &quot;${params.REPO_CRED_ID}&quot;,
       usernameVariable: &apos;USERNAME&apos;,
       passwordVariable: &apos;PASSWORD&apos;]]) {
         GIT_USER = &quot;${env.USERNAME}&quot;
@@ -283,7 +273,7 @@ def doScan(env) {
     }
     stage(&quot;Sonar Qube Scan&quot;) {
         //TODO: Sonar is failing
-        //doSonarQube(env)
+        doSonarQube(env)
     }
 }
 
@@ -420,7 +410,7 @@ def doSecurityScan(env) {
     }
     stage(&quot;Whitesource Scan&quot;) {
         //TODO: Whitesource is failing
-        //doWhiteShource(env);
+        doWhiteShource(env);
     }
 }
 
