@@ -437,13 +437,13 @@ def doWhiteShource(env) {
     ***************************************
     &quot;&quot;&quot;
 
-    def app = getApplicationDetails()
+    //def app = getApplicationDetails()
 
-    def apiKey = ${env.API_KEY_WHITESOURCE}
+    //def apiKey = ${env.API_KEY_WHITESOURCE}
 
-    if ( apiKey == null || apiKey.length()==0) {
-        apiKey=&quot;f350b639-e7cc-447b-a830-3737eee4a6c0&quot;;
-    }
+    //if ( apiKey == null || apiKey.length()==0) {
+    //    apiKey=&quot;f350b639-e7cc-447b-a830-3737eee4a6c0&quot;;
+    //}
 
     // sh &apos;&apos;&apos;#!/bin/sh
     // echo &apos;{
@@ -455,9 +455,9 @@ def doWhiteShource(env) {
     // } &gt; whitesource.config.json&apos;
     // &apos;&apos;&apos;
 
-    def command = &apos;echo {&quot;apiKey&quot;:&quot;&apos; + apiKey + &apos;&quot;,&quot;checkPolicies&quot;:true,&quot;productName&quot;:&quot;&apos; + app.code + &apos;&quot;,&quot;productVer&quot;:&quot;&apos; + app.release + &apos;&quot;,&quot;devDep&quot;: &quot;true&quot;} &gt; whitesource.config.json&apos;
+    //def command = &apos;echo {&quot;apiKey&quot;:&quot;&apos; + apiKey + &apos;&quot;,&quot;checkPolicies&quot;:true,&quot;productName&quot;:&quot;&apos; + app.code + &apos;&quot;,&quot;productVer&quot;:&quot;&apos; + app.release + &apos;&quot;,&quot;devDep&quot;: &quot;true&quot;} &gt; whitesource.config.json&apos;
 
-    sh command
+    //sh command
 
     sh &apos;whitesource run&apos;
 }
