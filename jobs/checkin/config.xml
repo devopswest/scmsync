@@ -79,8 +79,6 @@ node {
             //stage &apos;Archive&apos;
             //doArchive(env)
             
-        }
-        
             stage &apos;Package&apos;
             doPackage(env)
 
@@ -92,6 +90,10 @@ node {
 
             stage &apos;Clean-up&apos;
             doCleanUp(env)
+            
+        }
+        
+
 }
 
 def doPullCredentials(env) {
