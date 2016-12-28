@@ -27,13 +27,13 @@
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.12">
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
     <script>import groovy.json.JsonSlurper
 
 node {
-        //stage(&quot;Pull Vaut&quot;){
-          //  doPullCredentials(env)
-        //}
+        stage(&apos;Pull Vaut&apos;){
+        doPullCredentials(env)
+        }
 
         //https://wiki.jenkins-ci.org/display/JENKINS/Building+a+software+project#Buildingasoftwareproject-below
         //stage(&quot;Configure&quot;) {
