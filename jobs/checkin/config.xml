@@ -27,7 +27,7 @@
         <hudson.model.StringParameterDefinition>
           <name>DOCKER_REPO</name>
           <description></description>
-          <defaultValue>saikrishnagogula/adcclientms</defaultValue>
+          <defaultValue>adcclientms</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>DOCKER_REGISTRY</name>
