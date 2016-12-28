@@ -31,7 +31,7 @@
     <script>import groovy.json.JsonSlurper
 
 node {
-        stage(&apos;Pull Vaut&apos;){
+        stage &apos;Pull Vaut&apos;{
         doPullCredentials(env)
         }
 
