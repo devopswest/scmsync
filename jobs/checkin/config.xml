@@ -470,7 +470,6 @@ def doWhiteShource(env) {
     //def command = &apos;echo {&quot;apiKey&quot;:&quot;&apos; + apiKey + &apos;&quot;,&quot;checkPolicies&quot;:true,&quot;productName&quot;:&quot;&apos; + app.code + &apos;&quot;,&quot;productVer&quot;:&quot;&apos; + app.release + &apos;&quot;,&quot;devDep&quot;: &quot;true&quot;} &gt; whitesource.config.json&apos;
 
     //sh command
-
     sh &apos;whitesource run&apos;
 }
 
