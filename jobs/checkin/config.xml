@@ -250,12 +250,12 @@ def doTest(env) {
     ***************************************
     &quot;&quot;&quot;
 
-    stage(&quot;Unit Testing&quot;) {
-        doUnitTest(env)
-    }
-    stage(&quot;Coverage Analysis&quot;) {
-        doCodeCoverage(env)
-    }
+    stage &apos;Unit Testing&apos;
+    doUnitTest(env)
+    
+    stage &apos;Coverage Analysis&apos;
+    doCodeCoverage(env)
+    
 }
 
 def doScan(env) {
@@ -265,16 +265,16 @@ def doScan(env) {
     ***           SCANING               ***
     ***************************************
     &quot;&quot;&quot;
-    stage(&quot;Static Code Analysis&quot;) {
-        doStaticAnalysis(env)
-    }
-    stage(&quot;Security Scan&quot;) {
-        doSecurityScan(env)
-    }
-    stage(&quot;Sonar Qube Scan&quot;) {
+    stage &apos;Static Code Analysis&apos;
+    doStaticAnalysis(env)
+    
+    stage &apos;Security Scan&apos;
+    doSecurityScan(env)
+    
+    stage &apos;Sonar Qube Scan&apos;
         //TODO: Sonar is failing
-        doSonarQube(env)
-    }
+    doSonarQube(env)
+    
 }
 
 
@@ -401,17 +401,16 @@ def doFoP(env) {
 }
 
 def doSecurityScan(env) {
-    stage(&quot;Fortify Scan&quot;) {
-        doFortify(env);
-    }
-    stage(&quot;Blackduck Scan&quot;) {
+    stage &apos;Fortify Scan&apos;
+    doFortify(env)
+    
+    stage &apos;Blackduck Scan&apos;
         //TODO: Blackduck is failling
-        //doBlackDuck(env);
-    }
-    stage(&quot;Whitesource Scan&quot;) {
+        //doBlackDuck(env)
+    
+    stage &apos;Whitesource Scan&apos;
         //TODO: Whitesource is failing
-        doWhiteShource(env);
-    }
+    doWhiteShource(env);
 }
 
 def doBlackDuck(env) {
