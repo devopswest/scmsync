@@ -76,7 +76,7 @@ node {
             stage &apos;Scan&apos;
             doScan(env)
 
-            stage &apos;Archive&apos;
+            //stage &apos;Archive&apos;
             //doArchive(env)
             
         }
