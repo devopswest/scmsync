@@ -330,8 +330,8 @@ def doSonarQube(env) {
     ***************************************
     &quot;&quot;&quot;
 
-    sh &quot;gradle -b pipeline.gradle sonarqube&quot;
-    //sh &quot;cicd sonar&quot;
+    //sh &quot;gradle -b pipeline.gradle sonarqube&quot;
+    sh &quot;cicd sonar&quot;
 }
 
 def doCodeCoverage(env) {
