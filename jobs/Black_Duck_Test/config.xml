@@ -1,6 +1,27 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.5">
+  <description></description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
+    <script>node
+{
+        docker.image(&apos;easydevops/cicd:java&apos;).inside
+        {
+                stage &apos;Stage 1:Checking out GitHub Repo&apos;
+                checkout([$class: &apos;GitSCM&apos;, branches: [[name: &apos;*/cicd-pipeline&apos;]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: &apos;cbeaa05f-0c27-49d5-8ccf-7844af8a49f2&apos;, url: &apos;https://Saikrishna_Gogula@bitbucket.org/pwcadc/adcclientms.git&apos;]]])
+                //git url: &quot;$REPO_URL&quot;
+                
+                stage &apos;Stage 12: Black Duck Scan&apos;
+                hub_scan bomUpdateMaxiumWaitTime: &apos;5&apos;, dryRun: false, hubProjectName: &apos;adcclientms&apos;, hubProjectVersion: &apos;1.0.0&apos;, hubVersionDist: &apos;EXTERNAL&apos;, hubVersionPhase: &apos;PLANNING&apos;, scanMemory: &apos;4096&apos;, scans: [[scanTarget: &apos;&apos;]], shouldGenerateHubReport: false
+        }
+}
+        </script>
+    <sandbox>true</sandbox>
+  </definition>
   <triggers/>
 </flow-definition>
