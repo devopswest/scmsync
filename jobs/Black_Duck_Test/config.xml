@@ -17,11 +17,11 @@
                 checkout([$class: &apos;GitSCM&apos;, branches: [[name: &apos;*/cicd-pipeline&apos;]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: &apos;cbeaa05f-0c27-49d5-8ccf-7844af8a49f2&apos;, url: &apos;https://Saikrishna_Gogula@bitbucket.org/pwcadc/adcclientms.git&apos;]]])
                 //git url: &quot;$REPO_URL&quot;
                 
-                //stage &apos;Stage 2:Run build&apos;
-                //sh &quot;/var/devops/cicd/scripts/build.sh&quot;
+                stage &apos;Stage 2:Run build&apos;
+                sh &quot;/var/devops/cicd/scripts/build.sh&quot;
                 
-                //stage &apos;Stage 3: Run test and Coverage&apos;
-                //sh &quot;gradle -b pipeline.gradle test jacocoTestReport&quot;
+                stage &apos;Stage 3: Run test and Coverage&apos;
+                sh &quot;gradle -b pipeline.gradle test jacocoTestReport&quot;
             
                 //stage &apos;Stage 4: Run Scan&apos;
                 //sh &quot;gradle -b pipeline.gradle findbugsMain checkstyleMain pmdMain&quot;
@@ -50,8 +50,8 @@
                 //stage &apos;Stage 12: Black Duck Scan&apos;
                 //hub_scan bomUpdateMaxiumWaitTime: &apos;5&apos;, dryRun: false, hubProjectName: &apos;adcclientms&apos;, hubProjectVersion: &apos;1.0.0&apos;, hubVersionDist: &apos;EXTERNAL&apos;, hubVersionPhase: &apos;PLANNING&apos;, scanMemory: &apos;4096&apos;, scans: [[scanTarget: &apos;&apos;]], shouldGenerateHubReport: false
         
-                 stage &apos;Stage 13: Fortify&apos;
-                 sh &quot;gradle -b pipeline.gradle fortifyReport&quot;
+                 //stage &apos;Stage 13: Fortify&apos;
+                 //sh &quot;gradle -b pipeline.gradle fortifyReport&quot;
         }
 }
         </script>
