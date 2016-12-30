@@ -26,16 +26,16 @@
                 //stage &apos;Stage 4: Run Scan&apos;
                 //sh &quot;gradle -b pipeline.gradle findbugsMain checkstyleMain pmdMain&quot;
                 
-                //stage &apos;Stage 5: Code Coverage&apos;
-                //step([$class: &apos;JacocoPublisher&apos;, classPattern: &apos;build/classes&apos;, exclusionPattern: &apos;**/*Test*.class&apos;, execPattern: &apos;build/jacoco/test.exec&apos;, inclusionPattern: &apos;**/*.class&apos;, maximumClassCoverage: &apos;50&apos;, maximumInstructionCoverage: &apos;30&apos;, maximumLineCoverage: &apos;30&apos;, maximumMethodCoverage: &apos;50&apos;, sourcePattern: &apos;/src/main/java&apos;])
+                stage &apos;Stage 5: Code Coverage&apos;
+                step([$class: &apos;JacocoPublisher&apos;, classPattern: &apos;build/classes&apos;, exclusionPattern: &apos;**/*Test*.class&apos;, execPattern: &apos;build/jacoco/test.exec&apos;, inclusionPattern: &apos;**/*.class&apos;, maximumClassCoverage: &apos;50&apos;, maximumInstructionCoverage: &apos;30&apos;, maximumLineCoverage: &apos;30&apos;, maximumMethodCoverage: &apos;50&apos;, sourcePattern: &apos;/src/main/java&apos;])
 
                 //stage &apos;Stage 6: Static Code Analysis&apos;
                 //step([$class: &apos;CheckStylePublisher&apos;, pattern: &apos;build/reports/checkstyle/*.xml&apos;])
                 //step([$class: &apos;FindBugsPublisher&apos;, pattern: &apos;build/reports/findbugs/*.xml&apos;])
                 //step([$class: &apos;PmdPublisher&apos;, pattern: &apos;build/reports/pmd/*.xml&apos;])
                 
-                //stage &apos;Stage 8: Unit Tests&apos;
-                //step([$class: &apos;JUnitResultArchiver&apos;, testResults: &apos;build/test-results/*.xml&apos;])
+                stage &apos;Stage 8: Unit Tests&apos;
+                step([$class: &apos;JUnitResultArchiver&apos;, testResults: &apos;build/test-results/*.xml&apos;])
                 
                 //stage &apos;Stage 9: Whitesource&apos;
                 //sh &apos;sudo npm install -g whitesource&apos;
