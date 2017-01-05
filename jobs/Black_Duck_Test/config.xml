@@ -41,8 +41,8 @@
                 //sh &apos;sudo npm install -g whitesource&apos;
                 //sh &apos;whitesource run&apos;
                 
-                //stage &apos;Stage 10: Sonarqube analysis&apos;
-                //sh &apos;gradle -b pipeline.gradle sonarqube&apos;
+                stage &apos;Stage 10: Sonarqube analysis&apos;
+                sh &apos;gradle -b pipeline.gradle sonarqube&apos;
                 
                 //stage &apos;Stage 11: HPE Security Fortify Scan&apos;
                 //step([$class: &apos;FodBuilder&apos;, filePattern: &apos;&quot;&quot;&apos;, assessmentTypeId: &apos;170&apos;, applicationName: &apos;US - ASR - Client Microservice&apos;, releaseName: &quot;v2.0&quot;, technologyStack: &apos;JAVA/J2EE&apos;, languageLevel: &apos;1.8&apos;, runOpenSourceAnalysis: false, isExpressScan: false, isExpressAudit: false, doPollFortify: false, doPrettyLogOutput: false, includeAllFiles: false, includeThirdParty: false])
