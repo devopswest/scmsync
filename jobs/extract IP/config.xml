@@ -13,7 +13,7 @@
 {
     
     def target = &quot;tcp://172.10.10.10:4243&quot;
-    def servertarget = target.substring(&apos;//&apos;,&apos;:&apos;)
+    def servertarget = target.substring(str.indexOf(&quot;//&quot;) + 1, str.indexOf(&quot;:&quot;));
     echo &quot;Server = $servertarget&quot;
 }</script>
     <sandbox>true</sandbox>
