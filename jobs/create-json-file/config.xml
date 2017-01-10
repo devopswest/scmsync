@@ -14,7 +14,8 @@
 apiKey=&quot;f350b639-e7cc-447b-a830-3737eee4a6c0&quot;
 productname=&quot;java&quot;
 productversion=&quot;0.0.1&quot;
-sh &apos;&apos;&apos;echo &apos;{&quot;apiKey&quot;:&quot;&apos; + &apos;$apiKey&apos; + &apos;&quot;,&quot;checkPolicies&quot;:true,&quot;productName&quot;:&quot;&apos; + ${productname} + &apos;&quot;,&quot;productVer&quot;:&quot;&apos; + ${productversion} + &apos;&quot;,&quot;devDep&quot;: &quot;true&quot;}&apos; &gt; whitesource.config.json&apos;&apos;&apos;     
+sh &apos;&apos;&apos;echo &quot;apikey:$apiKey&quot; &gt; whitesource.config.json&apos;&apos;&apos;
+//sh &apos;&apos;&apos;echo &apos;{&quot;apiKey&quot;:&quot;&apos; + &apos;$apiKey&apos; + &apos;&quot;,&quot;checkPolicies&quot;:true,&quot;productName&quot;:&quot;&apos; + ${productname} + &apos;&quot;,&quot;productVer&quot;:&quot;&apos; + ${productversion} + &apos;&quot;,&quot;devDep&quot;: &quot;true&quot;}&apos; &gt; whitesource.config.json&apos;&apos;&apos;     
     sh &quot;ls -ltr&quot;
     sh &quot;cat whitesource.config.json&quot;
 }</script>
