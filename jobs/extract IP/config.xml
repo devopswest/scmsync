@@ -12,7 +12,7 @@
     <script>node 
 {
     
-    def target = &quot;tcp://172.10.10.10:4243&quot;
+    def target = &quot;tcp://5172.10.160.170:4243&quot;
     def servertarget = target.substring(target.indexOf(&quot;//&quot;) + 1);
     def server =target.substring(target.indexOf(&quot;://&quot;) + 3, target.lastIndexOf(&quot;:&quot;));
     echo &quot;Server = $server&quot;
