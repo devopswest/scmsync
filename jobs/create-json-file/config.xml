@@ -16,10 +16,10 @@ productname=&quot;java&quot;
 productversion=&quot;0.0.1&quot;
 sh &apos;&apos;&apos;#!/bin/sh
      echo &apos;{
-         &quot;apiKey&quot;:$apiKey,
+         &quot;apiKey:$apiKey&quot;,
          &quot;checkPolicies&quot;:true,
-         &quot;productName&quot;:$productname,
-         &quot;productVer&quot;:$productversion,
+         &quot;productName:$productname&quot;,
+         &quot;productVer:$productversion&quot;,
          &quot;devDep&quot;: &quot;true&quot;
      }&apos; &gt; whitesource.config.json
      &apos;&apos;&apos;
