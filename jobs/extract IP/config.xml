@@ -1,6 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.5">
+  <description></description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
+    <script>node 
+{
+    
+    sh &quot;def target = tcp://172.10.10.10:4243&quot;
+    sh &quot;def servertarget = grep -Po &apos;(?tcp://)[^:]*&apos; target&quot;
+    echo &quot;Server = $servertarget&quot;
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
   <triggers/>
 </flow-definition>
