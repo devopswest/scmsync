@@ -17,35 +17,35 @@
                 checkout([$class: &apos;GitSCM&apos;, branches: [[name: &apos;*/cicd-pipeline&apos;]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: &apos;cbeaa05f-0c27-49d5-8ccf-7844af8a49f2&apos;, url: &apos;https://Saikrishna_Gogula@bitbucket.org/pwcadc/adcclientms.git&apos;]]])
                 //git url: &quot;$REPO_URL&quot;
                 
-                stage &apos;Stage 2:Run build&apos;
-                sh &quot;/var/devops/cicd/scripts/build.sh&quot;
+                //stage &apos;Stage 2:Run build&apos;
+                //sh &quot;/var/devops/cicd/scripts/build.sh&quot;
                 
-                stage &apos;Stage 3: Run test and Coverage&apos;
-                sh &quot;gradle -b pipeline.gradle test jacocoTestReport&quot;
+                //stage &apos;Stage 3: Run test and Coverage&apos;
+                //sh &quot;gradle -b pipeline.gradle test jacocoTestReport&quot;
             
                 //stage &apos;Stage 4: Run Scan&apos;
                 //sh &quot;gradle -b pipeline.gradle findbugsMain checkstyleMain pmdMain&quot;
                 
-                stage &apos;Stage 5: Code Coverage&apos;
-                step([$class: &apos;JacocoPublisher&apos;, classPattern: &apos;build/classes&apos;, exclusionPattern: &apos;**/*Test*.class&apos;, execPattern: &apos;build/jacoco/test.exec&apos;, inclusionPattern: &apos;**/*.class&apos;, maximumClassCoverage: &apos;50&apos;, maximumInstructionCoverage: &apos;30&apos;, maximumLineCoverage: &apos;30&apos;, maximumMethodCoverage: &apos;50&apos;, sourcePattern: &apos;/src/main/java&apos;])
+                //stage &apos;Stage 5: Code Coverage&apos;
+                //step([$class: &apos;JacocoPublisher&apos;, classPattern: &apos;build/classes&apos;, exclusionPattern: &apos;**/*Test*.class&apos;, execPattern: &apos;build/jacoco/test.exec&apos;, inclusionPattern: &apos;**/*.class&apos;, maximumClassCoverage: &apos;50&apos;, maximumInstructionCoverage: &apos;30&apos;, maximumLineCoverage: &apos;30&apos;, maximumMethodCoverage: &apos;50&apos;, sourcePattern: &apos;/src/main/java&apos;])
 
                 //stage &apos;Stage 6: Static Code Analysis&apos;
                 //step([$class: &apos;CheckStylePublisher&apos;, pattern: &apos;build/reports/checkstyle/*.xml&apos;])
                 //step([$class: &apos;FindBugsPublisher&apos;, pattern: &apos;build/reports/findbugs/*.xml&apos;])
                 //step([$class: &apos;PmdPublisher&apos;, pattern: &apos;build/reports/pmd/*.xml&apos;])
                 
-                stage &apos;Stage 8: Unit Tests&apos;
-                step([$class: &apos;JUnitResultArchiver&apos;, testResults: &apos;build/test-results/*.xml&apos;])
+                //stage &apos;Stage 8: Unit Tests&apos;
+                //step([$class: &apos;JUnitResultArchiver&apos;, testResults: &apos;build/test-results/*.xml&apos;])
                 
                 //stage &apos;Stage 9: Whitesource&apos;
                 //sh &apos;sudo npm install -g whitesource&apos;
                 //sh &apos;whitesource run&apos;
                 
-                stage &apos;Stage 10: Sonarqube analysis&apos;
-                sh &apos;gradle -b pipeline.gradle sonarqube&apos;
+                //stage &apos;Stage 10: Sonarqube analysis&apos;
+                //sh &apos;gradle -b pipeline.gradle sonarqube&apos;
                 
-                //stage &apos;Stage 11: HPE Security Fortify Scan&apos;
-                //step([$class: &apos;FodBuilder&apos;, filePattern: &apos;&quot;&quot;&apos;, assessmentTypeId: &apos;170&apos;, applicationName: &apos;US - ASR - Client Microservice&apos;, releaseName: &quot;v2.0&quot;, technologyStack: &apos;JAVA/J2EE&apos;, languageLevel: &apos;1.8&apos;, runOpenSourceAnalysis: false, isExpressScan: false, isExpressAudit: false, doPollFortify: false, doPrettyLogOutput: false, includeAllFiles: false, includeThirdParty: false])
+                stage &apos;Stage 11: HPE Security Fortify Scan&apos;
+                step([$class: &apos;FodBuilder&apos;, filePattern: &apos;&quot;.*\.java|.*\.class&quot;&apos;, assessmentTypeId: &apos;170&apos;, applicationName: &apos;US - ASR - Client Microservice&apos;, releaseName: &quot;v2.0&quot;, technologyStack: &apos;JAVA/J2EE&apos;, languageLevel: &apos;1.8&apos;, runOpenSourceAnalysis: false, isExpressScan: false, isExpressAudit: false, doPollFortify: false, doPrettyLogOutput: false, includeAllFiles: false, includeThirdParty: false])
                 
                 //stage &apos;Stage 12: Black Duck Scan&apos;
                 //hub_scan bomUpdateMaxiumWaitTime: &apos;5&apos;, dryRun: false, hubProjectName: &apos;adcclientms&apos;, hubProjectVersion: &apos;1.0.0&apos;, hubVersionDist: &apos;EXTERNAL&apos;, hubVersionPhase: &apos;PLANNING&apos;, scanMemory: &apos;4096&apos;, scans: [[scanTarget: &apos;&apos;]], shouldGenerateHubReport: false
