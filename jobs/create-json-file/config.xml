@@ -12,8 +12,8 @@
     <script>import groovy.json.*
 node 
 {
-def json = new groovy.json.JsonBuilder()
-json.build
+def jsonBuilder = new JsonBuilder()
+jsonBuilder
 {
     apiKey &quot;f350b639-e7cc-447b-a830-3737eee4a6c0&quot;
     checkPolicies &quot;false&quot;
