@@ -11,12 +11,15 @@
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
     <script>node 
 {
+apiKey=&quot;f350b639-e7cc-447b-a830-3737eee4a6c0&quot;
+productname=&quot;java&quot;
+productversion=&quot;0.0.1&quot;
 sh &apos;&apos;&apos;#!/bin/sh
      echo &apos;{
          &quot;apiKey&quot;:&quot;${apiKey}&quot;,
          &quot;checkPolicies&quot;:true,
-         &quot;productName&quot;:&quot;${app.code}&quot;,
-         &quot;productVer&quot;:&quot;${app.release}&quot;,
+         &quot;productName&quot;:&quot;${productname}&quot;,
+         &quot;productVer&quot;:&quot;${productversion}&quot;,
          &quot;devDep&quot;: &quot;true&quot;
      }&apos; &gt; whitesource.config.json
      &apos;&apos;&apos;
