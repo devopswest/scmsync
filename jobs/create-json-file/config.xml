@@ -9,28 +9,17 @@
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
-    <script>import groovy.json.JsonBuilder
-import groovy.json.JsonOutput
-node 
+    <script>node 
 {
-createjson();
-String outputFile = &apos;whitesource.config.json&apos;
-def fileWriter = new FileWriter(outputFile)
-jsonBuilder.writeTo(fileWriter)
-fileWriter.flush()
-def fileContents = new File(outputFile).text
-}    
-@NonCPS
-def createjson(){
-def jsonBuilder = new JsonBuilder()
-jsonBuilder
-{
-    apiKey &quot;f350b639-e7cc-447b-a830-3737eee4a6c0&quot;
-    checkPolicies &quot;false&quot;
-    productName &quot;adcclientms&quot;
-    productVer &quot;1.0.0&quot;
-    devDep &quot;true&quot;
-}
+sh &apos;&apos;&apos;#!/bin/sh
+     echo &apos;{
+         &quot;apiKey&quot;:&quot;${apiKey}&quot;,
+         &quot;checkPolicies&quot;:true,
+         &quot;productName&quot;:&quot;${app.code}&quot;,
+         &quot;productVer&quot;:&quot;${app.release}&quot;,
+         &quot;devDep&quot;: &quot;true&quot;
+     } &gt; whitesource.config.json&apos;
+     &apos;&apos;&apos;
 }</script>
     <sandbox>true</sandbox>
   </definition>
