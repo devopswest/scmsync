@@ -9,7 +9,8 @@
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
-    <script>import groovy.json.*
+    <script>import groovy.json.JsonBuilder
+import groovy.json.JsonOutput
 node 
 {
 def jsonBuilder = new JsonBuilder()
@@ -21,8 +22,7 @@ jsonBuilder
     productVer &quot;1.0.0&quot;
     devDep &quot;true&quot;
 }
-println &quot;JSON Pretty Printed Config &quot;
-println &quot;==========================&quot;
+
 println JsonOutput.prettyPrint(jsonBuilder.toString())
 
 String outputFile = &apos;whitesource.config.json&apos;
@@ -30,10 +30,6 @@ def fileWriter = new FileWriter(outputFile)
 jsonBuilder.writeTo(fileWriter)
 fileWriter.flush()
 def fileContents = new File(outputFile).text
-println &quot;File contents : &quot; + fileContents
-println &quot;&quot;
-println &quot;File Contents PrettyPrint&quot;
-println &quot;=========================&quot;
 println JsonOutput.prettyPrint(fileContents)
 }    </script>
     <sandbox>true</sandbox>
