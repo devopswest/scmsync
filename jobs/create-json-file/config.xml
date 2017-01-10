@@ -13,7 +13,15 @@
 import groovy.json.JsonOutput
 node 
 {
+createjson();
+String outputFile = &apos;whitesource.config.json&apos;
+def fileWriter = new FileWriter(outputFile)
+jsonBuilder.writeTo(fileWriter)
+fileWriter.flush()
+def fileContents = new File(outputFile).text
+}    
 @NonCPS
+def createjson(){
 def jsonBuilder = new JsonBuilder()
 jsonBuilder
 {
@@ -23,12 +31,7 @@ jsonBuilder
     productVer &quot;1.0.0&quot;
     devDep &quot;true&quot;
 }
-String outputFile = &apos;whitesource.config.json&apos;
-def fileWriter = new FileWriter(outputFile)
-jsonBuilder.writeTo(fileWriter)
-fileWriter.flush()
-def fileContents = new File(outputFile).text
-}    </script>
+}</script>
     <sandbox>true</sandbox>
   </definition>
   <triggers/>
