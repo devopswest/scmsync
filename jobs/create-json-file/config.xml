@@ -22,15 +22,11 @@ jsonBuilder
     productVer &quot;1.0.0&quot;
     devDep &quot;true&quot;
 }
-
-println JsonOutput.prettyPrint(jsonBuilder.toString())
-
 String outputFile = &apos;whitesource.config.json&apos;
 def fileWriter = new FileWriter(outputFile)
 jsonBuilder.writeTo(fileWriter)
 fileWriter.flush()
 def fileContents = new File(outputFile).text
-println JsonOutput.prettyPrint(fileContents)
 }    </script>
     <sandbox>true</sandbox>
   </definition>
