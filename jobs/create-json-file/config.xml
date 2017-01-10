@@ -20,6 +20,9 @@ sh &apos;&apos;&apos;#!/bin/sh
          &quot;devDep&quot;: &quot;true&quot;
      } &gt; whitesource.config.json&apos;
      &apos;&apos;&apos;
+     
+    sh &quot;ls -ltr&quot;
+    sh &quot;cat whitesource.config.json&quot;
 }</script>
     <sandbox>true</sandbox>
   </definition>
