@@ -13,8 +13,7 @@
 {
     
     def target = &quot;tcp://172.10.10.10:4243&quot;
-    //def servertarget = target.substring(6,18)
-    def servertarget=target.subSequence(target.firstIndexOf(&quot;//&quot;) + 1, log.length())
+    def servertarget = target.substring(&apos;//&apos;,&apos;:&apos;)
     echo &quot;Server = $servertarget&quot;
 }</script>
     <sandbox>true</sandbox>
