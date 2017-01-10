@@ -13,6 +13,7 @@
 import groovy.json.JsonOutput
 node 
 {
+@NonCPS
 def jsonBuilder = new JsonBuilder()
 jsonBuilder
 {
