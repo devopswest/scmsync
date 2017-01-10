@@ -18,7 +18,7 @@ sh &apos;&apos;&apos;#!/bin/sh
          &quot;productName&quot;:&quot;${app.code}&quot;,
          &quot;productVer&quot;:&quot;${app.release}&quot;,
          &quot;devDep&quot;: &quot;true&quot;
-     } &gt; whitesource.config.json&apos;
+     }&apos; &gt; whitesource.config.json
      &apos;&apos;&apos;
      
     sh &quot;ls -ltr&quot;
