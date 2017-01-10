@@ -45,7 +45,7 @@
                 //sh &apos;gradle -b pipeline.gradle sonarqube&apos;
                 
                 stage &apos;Stage 11: HPE Security Fortify Scan&apos;
-                step([$class: &apos;FodBuilder&apos;, filePattern: &apos;&quot;*.java,*.class&quot;&apos;, assessmentTypeId: &apos;170&apos;, applicationName: &apos;US - ASR - Client Microservice&apos;, releaseName: &quot;v2.0&quot;, technologyStack: &apos;JAVA/J2EE&apos;, languageLevel: &apos;1.8&apos;, runOpenSourceAnalysis: false, isExpressScan: false, isExpressAudit: false, doPollFortify: false, doPrettyLogOutput: false, includeAllFiles: false, includeThirdParty: false])
+                step([$class: &apos;FodBuilder&apos;, filePattern: &apos;*.java,*.class&apos;, assessmentTypeId: &apos;170&apos;, applicationName: &apos;US - ASR - Client Microservice&apos;, releaseName: &quot;v2.0&quot;, technologyStack: &apos;JAVA/J2EE&apos;, languageLevel: &apos;1.8&apos;, runOpenSourceAnalysis: false, isExpressScan: false, isExpressAudit: false, doPollFortify: false, doPrettyLogOutput: false, includeAllFiles: false, includeThirdParty: false])
                 
                 //stage &apos;Stage 12: Black Duck Scan&apos;
                 //hub_scan bomUpdateMaxiumWaitTime: &apos;5&apos;, dryRun: false, hubProjectName: &apos;adcclientms&apos;, hubProjectVersion: &apos;1.0.0&apos;, hubVersionDist: &apos;EXTERNAL&apos;, hubVersionPhase: &apos;PLANNING&apos;, scanMemory: &apos;4096&apos;, scans: [[scanTarget: &apos;&apos;]], shouldGenerateHubReport: false
