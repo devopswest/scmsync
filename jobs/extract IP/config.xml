@@ -13,7 +13,7 @@
 {
     
     def target = &quot;tcp://172.10.10.10:4243&quot;
-    def servertarget = sh &quot;grep -Po &apos;(?tcp://)[^:]*&apos; target&quot;
+    def servertarget = awk &apos;{print $2}&apos; target
     echo &quot;Server = $servertarget&quot;
 }</script>
     <sandbox>true</sandbox>
