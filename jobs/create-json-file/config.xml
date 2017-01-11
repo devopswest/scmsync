@@ -15,7 +15,7 @@ apiKey=&quot;f350b639-e7cc-447b-a830-3737eee4a6c0&quot;
 productname=&quot;java&quot;
 productversion=&quot;0.0.1&quot;
 
-writeFile file: &quot;whitesource.config.json&quot;, text: &quot;$apikey $productname $productversion&quot;
+writeFile file: &quot;whitesource.config.json&quot;, text: &quot;${apikey} ${productname} ${productversion}&quot;
    
     sh &quot;ls -ltr&quot;
     sh &quot;cat whitesource.config.json&quot;
