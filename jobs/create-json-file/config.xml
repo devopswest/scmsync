@@ -23,6 +23,8 @@ echo -e &apos;{&quot;\&quot;&quot;apiKey&quot;\&quot;:&quot;&apos; + apiKey + &a
 &apos;&apos;&apos;
 sh &quot;ls -ltr&quot;
 sh &quot;cat whitesource.config.json&quot;
+sh &quot;rm whitesource.config.json&quot;
+sh &quot;cat whitesource.config.json&quot;
 }</script>
     <sandbox>true</sandbox>
   </definition>
