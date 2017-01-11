@@ -16,8 +16,10 @@ productname=&quot;java&quot;
 productversion=&quot;0.0.1&quot;
 
 //writeFile file: &quot;whitesource.config.json&quot;, text: &quot;${apikey} ${productname} ${productversion}&quot;
-def command = &apos;echo {&quot;\n&quot;&quot;/apiKey&quot;/:&quot;/&apos; + apiKey + &apos;/,\n&quot;&quot;/checkPolicies&quot;/:&quot;/true/,\n&quot;&quot;/productName&quot;/:&quot;/&apos; + productname + &apos;/,\n&quot;&quot;/productVer&quot;/:&quot;/&apos; + productversion + &apos;/,\n&quot;&quot;/devDep&quot;/: &quot;/true/\n&quot;} &gt; whitesource.config.json&apos;
+def command = &apos;echo {&quot;\n&quot;&quot;.apiKey&quot;.:&quot;/&apos; + apiKey + &apos;/,\n&quot;&quot;/checkPolicies&quot;/:&quot;/true/,\n&quot;&quot;/productName&quot;/:&quot;/&apos; + productname + &apos;/,\n&quot;&quot;/productVer&quot;/:&quot;/&apos; + productversion + &apos;/,\n&quot;&quot;/devDep&quot;/: &quot;/true/\n&quot;} &gt; whitesource.config.json&apos;
 sh command
+//sh &quot;sed -i &apos;s/./,/g&apos; whitesource.config.json&quot;
+
     
     sh &quot;ls -ltr&quot;
     sh &quot;cat whitesource.config.json&quot;
