@@ -15,10 +15,7 @@ apiKey=&quot;f350b639-e7cc-447b-a830-3737eee4a6c0&quot;
 productname=&quot;java&quot;
 productversion=&quot;0.0.1&quot;
 
-   sh &apos;&apos;&apos;#!/bin/sh
-     echo &gt; whitesource.config.json&apos;&apos;&apos;
-   new File( &quot;whitesource.config.json&quot; ).append( &quot;$apiKey\n&quot; )
-   //whitesource.config.json &lt;&lt; &quot;$apiKey\n&quot;
+writeFile file: &quot;whitesource.config.json&quot;, text: &quot;This file is useful, need to archive it.&quot;
    
     sh &quot;ls -ltr&quot;
     sh &quot;cat whitesource.config.json&quot;
