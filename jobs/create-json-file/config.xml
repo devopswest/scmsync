@@ -16,7 +16,7 @@ productname=&quot;java&quot;
 productversion=&quot;0.0.1&quot;
 
 //writeFile file: &quot;whitesource.config.json&quot;, text: &quot;${apikey} ${productname} ${productversion}&quot;
-def command = &apos;echo {&quot;apiKey&quot;:&quot;&apos; + apiKey + &apos;&quot;\n,&quot;checkPolicies&quot;:true\n,&quot;productName&quot;:&quot;&apos; + productname + &apos;&quot;\n,&quot;productVer&quot;:&quot;&apos; + productversion + &apos;&quot;\n,&quot;devDep&quot;: &quot;true&quot;\n} &gt; whitesource.config.json&apos;
+def command = &apos;echo {&quot;apiKey&quot;:&quot;&apos; + apiKey + &apos;&quot;&apos;\n&apos;,&quot;checkPolicies&quot;:true&apos;\n&apos;,&quot;productName&quot;:&quot;&apos; + productname + &apos;&quot;&apos;\n&apos;,&quot;productVer&quot;:&quot;&apos; + productversion + &apos;&quot;&apos;\n&apos;,&quot;devDep&quot;: &quot;true&quot;&apos;\n&apos;} &gt; whitesource.config.json&apos;
 sh command
     
     sh &quot;ls -ltr&quot;
