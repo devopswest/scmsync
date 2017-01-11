@@ -17,7 +17,7 @@ productversion=&quot;0.0.1&quot;
 
    sh &apos;&apos;&apos;#!/bin/sh
      echo &gt; whitesource.config.json&apos;&apos;&apos;
-   
+   new File( &quot;whitesource.config.json&quot; ).append( &quot;$apiKey\n&quot; )
    //whitesource.config.json &lt;&lt; &quot;$apiKey\n&quot;
    
     sh &quot;ls -ltr&quot;
