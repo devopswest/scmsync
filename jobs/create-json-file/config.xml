@@ -15,8 +15,16 @@ apiKey=&quot;f350b639-e7cc-447b-a830-3737eee4a6c0&quot;
 productname=&quot;java&quot;
 productversion=&quot;0.0.1&quot;
 
-   def file1 = new File(&apos;whitesource.config.json&apos;)  //assume it&apos;s initialized 
-   file1 &lt;&lt; &quot;$apiKey\n&quot;
+   def file1 = new File(&apos;whitesource.config.json&apos;)
+   if(file1.exists())
+   {
+       log.info(&quot;A file named &quot; + fileName + &quot; already exisits in the same folder&quot;)
+   }
+   else
+   {
+       file1.write(&quot;$apiKey\n&quot;)
+   }
+   //file1 &lt;&lt; &quot;$apiKey\n&quot;
    
     sh &quot;ls -ltr&quot;
     sh &quot;cat whitesource.config.json&quot;
