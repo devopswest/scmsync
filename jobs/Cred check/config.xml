@@ -21,7 +21,7 @@
     <org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper plugin="credentials-binding@1.9">
       <bindings>
         <org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding>
-          <credentialsId>docker_creds_id</credentialsId>
+          <credentialsId>66873187-56cf-4046-92ac-1c0e4ef6fe56</credentialsId>
           <usernameVariable>username</usernameVariable>
           <passwordVariable>password</passwordVariable>
         </org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding>
