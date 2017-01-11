@@ -18,7 +18,9 @@ productversion=&quot;0.0.1&quot;
 //writeFile file: &quot;whitesource.config.json&quot;, text: &quot;${apikey} ${productname} ${productversion}&quot;
 //def command = &apos;echo -e {&quot;\napiKey&quot;:&quot;&apos; + apiKey + &apos;,\n&quot;&quot;checkPolicies&quot;:&quot;true,\n&quot;&quot;productName&quot;:&quot;&apos; + productname + &apos;,\n&quot;&quot;productVer&quot;:&quot;&apos; + productversion + &apos;,\n&quot;&quot;devDep&quot;: &quot;true\n&quot;} &gt; whitesource.config.json&apos;
 //sh command
-sh &apos;&apos;&apos;#!/bin/sh echo -e &apos;{&quot;\napiKey&quot;:&quot;&apos; + apiKey + &apos;,\n&quot;&quot;checkPolicies&quot;:&quot;true,\n&quot;&quot;productName&quot;:&quot;&apos; + productname + &apos;,\n&quot;&quot;productVer&quot;:&quot;&apos; + productversion + &apos;,\n&quot;&quot;devDep&quot;: &quot;true\n&quot;} &gt; whitesource.config.json&apos;&apos;&apos;&apos;
+sh &apos;&apos;&apos;#!/bin/sh 
+echo -e &apos;{&quot;\napiKey&quot;:&quot;&apos; + apiKey + &apos;,\n&quot;&quot;checkPolicies&quot;:&quot;true,\n&quot;&quot;productName&quot;:&quot;&apos; + productname + &apos;,\n&quot;&quot;productVer&quot;:&quot;&apos; + productversion + &apos;,\n&quot;&quot;devDep&quot;: &quot;true\n&quot;} &gt; whitesource.config.json&apos;
+&apos;&apos;&apos;
 sh &quot;ls -ltr&quot;
 sh &quot;cat whitesource.config.json&quot;
 }</script>
