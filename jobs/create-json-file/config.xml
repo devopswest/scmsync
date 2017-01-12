@@ -19,7 +19,7 @@ def line = &quot;{&quot; +
          &quot;,\n\&quot;checkPolicies\&quot;:\&quot;true\&quot;&quot;+
          &quot;,\n\&quot;productName\&quot;:\&quot;${productname}\&quot;&quot; + 
          &quot;,\n\&quot;productVer\&quot;:\&quot;${productversion}\&quot;&quot; + 
-         &quot;,\n\&quot;devDep\&quot;: \&quot;true\&quot;}&quot;
+         &quot;,\n\&quot;devDep\&quot;: \&quot;true\&quot;\n}&quot;
          
 echo &quot;${line}&quot;
 writeFile file: &quot;whitesource.config.json&quot;, text: line
