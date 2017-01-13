@@ -59,6 +59,8 @@ node
                  //sh &quot;cicd fortify&quot;
                  //sh &quot;/var/devops/cicd/thirdparty/fortify/linux/bin/ReportGenerator -format xml -f build/reports/report.xml -source /var/app/build/reports/fortify/report.fpr -template DisaStig3.10.xml -showSuppressed -showHidden&quot;
                  //sh &quot;cd /var/app/build/reports/fortify&quot;
+                 sh &quot;export PATH=$PATH:/var/devops/cicd/thirdparty/fortify/linux/bin&quot;
+                 sh &quot;export JAVA_HOME=/usr/lib/jvm/java-1.8.0-open.jdk-amd64&quot;
                  sh &quot;gradle -b pipeline.gradle fortifyReport&quot;
                  sh &quot;cd /build/reports/fortify&quot;
                  sh &quot;pwd&quot;
