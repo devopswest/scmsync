@@ -52,7 +52,48 @@
         
                  //stage &apos;Stage 13: Fortify&apos;
                  //sh &quot;gradle -b pipeline.gradle fortifyReport&quot;
+                 
+                 stage &apos;Stage 2: Fortify SCA&apos;
+                 def app = getApplicationDetails()
+                 sh &quot;cicd fortify&quot;
         }
+}
+
+def getApplicationDetails() {
+
+    echo &quot;Reading Application Properties&quot;
+
+    def myJson = readFile &quot;package.json&quot;
+    def jsonSlurper = new JsonSlurper()
+    def jsonObject = jsonSlurper.parseText(myJson)
+
+    def name = &quot;$jsonObject.name&quot;
+    def version = &quot;$jsonObject.version&quot;
+    def description = &quot;$jsonObject.description&quot;
+
+    def app = [
+        name: &quot;$jsonObject.name&quot;,
+        version: &quot;$jsonObject.version&quot;,
+        description: &quot;$jsonObject.description&quot;,
+        code: &quot;$jsonObject.code&quot;,
+        release: &quot;$jsonObject.release&quot;,
+        stack: &quot;$jsonObject.stack&quot;,
+        languageLevel: &quot;$jsonObject.languageLevel&quot;,
+        assestmentType: &quot;$jsonObject.assestmentType&quot;
+        //imageName: &quot;$jsonObject.cicd.image&quot;
+        //rfc: jsonObject.rfc
+    ]
+
+    //def cicd = jsonObject.cicd
+    //def rfc = jsonObject.rfc
+
+    //if (cicd != null) app.cicd=cicd
+    //if (rfc != null) app.rfc=rfc
+
+    jsonSlurper = null
+    jsonObject = null
+
+    return app
 }
         </script>
     <sandbox>true</sandbox>
