@@ -57,7 +57,7 @@ node
                  stage &apos;Stage 2: Fortify SCA&apos;
                  def app = getApplicationDetails()
                  sh &quot;cicd fortify&quot;
-                 sh &quot;.\ReportGenerator -template &quot;DeveloperWorkbook.xml&quot; -format &quot;html&quot; -f &quot;%WORKSPACE%\Assessment.html&quot; -source  &quot;%WORKSPACE%\Assessment.fpr&quot;&quot;
+                 sh &quot;ReportGenerator -template &quot;DeveloperWorkbook.xml&quot; -format &quot;html&quot; &quot;%WORKSPACE%\Assessment.html&quot; -source  &quot;%WORKSPACE%\Assessment.fpr&quot;&quot;
         }
 }
 
