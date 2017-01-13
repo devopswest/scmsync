@@ -55,10 +55,12 @@ node
                  //sh &quot;gradle -b pipeline.gradle fortifyReport&quot;
                  
                  stage &apos;Stage 2: Fortify SCA&apos;
-                 def app = getApplicationDetails()
-                 sh &quot;cicd fortify&quot;
+                 //def app = getApplicationDetails()
+                 //sh &quot;cicd fortify&quot;
                  //sh &quot;/var/devops/cicd/thirdparty/fortify/linux/bin/ReportGenerator -format xml -f build/reports/report.xml -source /var/app/build/reports/fortify/report.fpr -template DisaStig3.10.xml -showSuppressed -showHidden&quot;
                  //sh &quot;cd /var/app/build/reports/fortify&quot;
+                 sh &quot;gradle -b pipeline.gradle fortifyReport&quot;
+                 sh &quot;cd /build/reports/fortify&quot;
                  sh &quot;pwd&quot;
                  sh &quot;ls -ltr&quot;
         }
