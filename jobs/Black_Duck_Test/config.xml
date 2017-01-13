@@ -57,7 +57,10 @@ node
                  stage &apos;Stage 2: Fortify SCA&apos;
                  def app = getApplicationDetails()
                  sh &quot;cicd fortify&quot;
-                 sh &quot;ReportGenerator -template &quot;DeveloperWorkbook.xml&quot; -format &quot;html&quot; &quot;%WORKSPACE%\Assessment.html&quot; -source  &quot;%WORKSPACE%\Assessment.fpr&quot;&quot;
+                 sh &quot;ReportGenerator -format html -f /var/app/build/reports/fortify/report.html -source /var/app/build/reports/fortify/report.fpr -template DisaStig3.10.xml -showSuppressed -showHidden&quot;
+                 sh &quot;cd /var/app/build/reports/fortify&quot;
+                 sh &quot;pwd&quot;
+                 sh &quot;ls -ltr&quot;
         }
 }
 
