@@ -9,7 +9,8 @@
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.23">
-    <script>node
+    <script>import groovy.json.JsonSlurper
+node
 {
         docker.image(&apos;easydevops/cicd:java&apos;).inside
         {
